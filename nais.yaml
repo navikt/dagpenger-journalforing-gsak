@@ -1,0 +1,24 @@
+name: dagpenger-journalforing-gsak
+image: repo.adeo.no:5443/dagpenger-journalforing-gsak
+team: dagpenger
+replicas:
+  min: 2
+  max: 4
+resources:
+  limits:
+    cpu: 1000m
+    memory: 384Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+prometheus:
+  enabled: true
+  #fasitResources:
+  #  used:
+  #    - alias: dagpenger-joark-mottak-properties
+  #      resourceType: applicationproperties
+  #    - alias: srvdagpenger
+  #      resourceType: credential
+  #      propertyMap:
+  #        username: KAFKA_USERNAME
+  #        password: KAFKA_PASSWORD
