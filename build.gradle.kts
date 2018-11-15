@@ -6,6 +6,7 @@ plugins {
     id("com.palantir.git-version") version "0.11.0"
     id("com.adarshr.test-logger") version "1.5.0"
     id("java-library")
+    id("info.solidsoft.pitest") version "1.3.0"
 }
 
 buildscript {
@@ -78,7 +79,6 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit"))
     testImplementation("junit:junit:4.12")
-    testImplementation("au.com.dius:pact-jvm-consumer-java8_2.12:3.6.0-rc.0")
 }
 
 spotless {
@@ -90,3 +90,13 @@ spotless {
         ktlint()
     }
 }
+
+pitest {
+    threads = 4
+    //coverageThreshold = 80
+    pitestVersion = "1.4.3"
+    avoidCallsTo = setOf("kotlin.jvm.internal")
+    timestampedReports = false
+}
+
+tasks.getByName("check").dependsOn("pitest")
