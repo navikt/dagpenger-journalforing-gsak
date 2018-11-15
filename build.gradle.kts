@@ -20,11 +20,12 @@ apply {
 }
 
 repositories {
-    maven("https://repo.adeo.no/repository/maven-central")
+    mavenCentral()
     maven("http://packages.confluent.io/maven")
     maven("https://dl.bintray.com/kotlin/ktor")
     maven("https://dl.bintray.com/kotlin/kotlinx")
     maven("https://dl.bintray.com/kittinunf/maven")
+    maven("https://oss.sonatype.org/content/repositories/snapshots/")
 }
 
 val gitVersion: groovy.lang.Closure<Any> by extra
