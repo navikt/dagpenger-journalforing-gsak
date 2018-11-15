@@ -1,24 +1,27 @@
-name: dagpenger-journalforing-gsak
-image: repo.adeo.no:5443/dagpenger-journalforing-gsak
-team: dagpenger
-replicas:
-  min: 2
-  max: 4
-resources:
-  limits:
-    cpu: 1000m
-    memory: 384Mi
-  requests:
-    cpu: 100m
-    memory: 256Mi
-prometheus:
-  enabled: true
-  #fasitResources:
-  #  used:
-  #    - alias: dagpenger-joark-mottak-properties
-  #      resourceType: applicationproperties
-  #    - alias: srvdagpenger
-  #      resourceType: credential
-  #      propertyMap:
-  #        username: KAFKA_USERNAME
-  #        password: KAFKA_PASSWORD
+# https://github.com/nais/naiserator/blob/master/examples/app.yaml
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: dagpenger-journalforing-gsak
+  labels:
+    team: TeamDagpenger
+spec:
+  image: repo.adeo.no:5443/dagpenger-journalforing-gsak
+  port: 8080
+  liveness:
+    path: isAlive
+  readiness:
+    path: isReady
+  replicas:
+    min: 2
+    max: 4
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 384Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  prometheus:
+    enabled: true
+    path: /metrics
