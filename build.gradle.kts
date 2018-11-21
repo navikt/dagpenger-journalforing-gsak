@@ -1,6 +1,6 @@
 plugins {
     id("application")
-    kotlin("jvm") version "1.2.70"
+    kotlin("jvm") version "1.3.10"
     id("com.diffplug.gradle.spotless") version "3.13.0"
     id("com.palantir.docker") version "0.20.1"
     id("com.palantir.git-version") version "0.11.0"
@@ -54,7 +54,7 @@ docker {
 val kotlinLoggingVersion = "1.4.9"
 val kafkaVersion = "2.0.0"
 val confluentVersion = "4.1.2"
-val ktorVersion = "0.9.5"
+val ktorVersion = "1.0.0"
 val prometheusVersion = "0.5.0"
 val fuelVersion = "1.15.0"
 
