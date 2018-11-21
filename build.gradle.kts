@@ -79,6 +79,8 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit"))
     testImplementation("junit:junit:4.12")
+    testImplementation("com.github.tomakehurst:wiremock:2.19.0")
+    testImplementation("no.nav:kafka-embedded-env:2.0.1")
 }
 
 spotless {
@@ -93,7 +95,7 @@ spotless {
 
 pitest {
     threads = 4
-    //coverageThreshold = 80
+    coverageThreshold = 80
     pitestVersion = "1.4.3"
     avoidCallsTo = setOf("kotlin.jvm.internal")
     timestampedReports = false

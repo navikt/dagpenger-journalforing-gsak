@@ -9,15 +9,15 @@ import no.nav.dagpenger.oidc.OidcClient
 
 const val TEMA_DAGPENGER = "DAG"
 
-class GsakHttpClient(private val gsakUrl: String, private val oidcClient: OidcClient) {
+class GsakHttpClient(private val gsakUrl: String, private val oidcClient: OidcClient) : GsakClient {
 
-    fun findSak(aktoerId: String, correlationId: String): GsakSak {
+    override fun findSak(aktoerId: String, correlationId: String): List<GsakSak> {
         val url = "${gsakUrl}v1/saker"
         val params = listOf("aktoerId" to aktoerId, "tema" to TEMA_DAGPENGER)
         val (_, response, result) = with(url.httpGet(params)) {
             header("Authorization" to oidcClient.oidcToken().access_token.toBearerToken())
             header("X-Correlation-ID" to correlationId)
-            responseObject<GsakSak>()
+            responseObject<List<GsakSak>>()
         }
 
         return when (result) {
@@ -27,7 +27,7 @@ class GsakHttpClient(private val gsakUrl: String, private val oidcClient: OidcCl
         }
     }
 
-    fun createSak(aktoerId: String, fagsakId: String, correlationId: String): GsakSak {
+    override fun createSak(aktoerId: String, fagsakId: String, correlationId: String): GsakSak {
         val url = "${gsakUrl}v1/saker"
         val request = GsakSak(tema = TEMA_DAGPENGER, aktoerId = aktoerId, fagsakNr = fagsakId)
         val json = Gson().toJson(request).toString()

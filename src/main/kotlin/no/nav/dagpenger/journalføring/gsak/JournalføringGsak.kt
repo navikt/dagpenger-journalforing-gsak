@@ -3,6 +3,7 @@ package no.nav.dagpenger.journalføring.gsak
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig
 import mu.KotlinLogging
 import no.nav.dagpenger.events.avro.Behov
+import no.nav.dagpenger.events.avro.Journalpost
 import no.nav.dagpenger.events.avro.JournalpostType
 import no.nav.dagpenger.events.avro.JournalpostType.ETTERSENDING
 import no.nav.dagpenger.events.avro.JournalpostType.GJENOPPTAK
@@ -23,8 +24,10 @@ import java.util.Properties
 
 private val LOGGER = KotlinLogging.logger {}
 
-class JournalføringGsak(val env: Environment, val gsakHttpClient: GsakHttpClient) : Service() {
+class JournalføringGsak(val env: Environment, val gsakClient: GsakClient) : Service() {
     override val SERVICE_APP_ID = "journalføring-gsak"
+
+    override val HTTP_PORT: Int = env.httpPort ?: super.HTTP_PORT
 
     companion object {
         @JvmStatic
@@ -77,20 +80,33 @@ class JournalføringGsak(val env: Environment, val gsakHttpClient: GsakHttpClien
     private fun addGsakSakId(behov: Behov): Behov {
         val journalpost = behov.getJournalpost()
 
-        val sak = when (journalpost.getJournalpostType()) {
-            NY -> gsakHttpClient.createSak(
-                    journalpost.getSøker().getIdentifikator(),
-                    journalpost.getFagsakId(),
-                    behov.getBehovId())
-            ETTERSENDING, GJENOPPTAK -> gsakHttpClient.findSak(
-                    journalpost.getSøker().getIdentifikator(),
-                    behov.getBehovId())
+        val sakId = when (journalpost.getJournalpostType()) {
+            NY -> createSak(journalpost, behov.getBehovId())
+            ETTERSENDING, GJENOPPTAK -> findSak(journalpost, behov.getBehovId())
             else -> throw UnexpectedJournaltypeException("Unexpected journalposttype ${journalpost.getJournalpostType()}")
         }
 
-        journalpost.setGsaksakId(sak.id.toString())
+        journalpost.setGsaksakId(sakId)
 
         return behov
+    }
+
+    private fun createSak(journalpost: Journalpost, correlationId: String): String {
+        val sak = gsakClient.createSak(
+                journalpost.getSøker().getIdentifikator(),
+                journalpost.getFagsakId(),
+                correlationId)
+
+        return sak.id.toString()
+    }
+
+    private fun findSak(journalpost: Journalpost, correlationId: String): String {
+        val saker = gsakClient.findSak(
+                journalpost.getSøker().getIdentifikator(),
+                correlationId)
+
+        //TODO: Find correct sak
+        return saker[0].id.toString()
     }
 }
 
