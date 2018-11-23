@@ -6,9 +6,10 @@ import no.nav.common.JAASCredential
 import no.nav.common.KafkaEnvironment
 import no.nav.common.embeddedutils.getAvailablePort
 import no.nav.dagpenger.events.avro.Behov
+import no.nav.dagpenger.events.avro.HenvendelsesType
 import no.nav.dagpenger.events.avro.Journalpost
-import no.nav.dagpenger.events.avro.JournalpostType
-import no.nav.dagpenger.events.avro.Søker
+import no.nav.dagpenger.events.avro.Mottaker
+import no.nav.dagpenger.events.avro.Søknad
 import no.nav.dagpenger.streams.Topics
 import no.nav.dagpenger.streams.Topics.INNGÅENDE_JOURNALPOST
 import org.apache.kafka.clients.CommonClientConfigs
@@ -100,17 +101,20 @@ class JournalføringGsakComponentTest {
 
         innkommendeBehov.forEach { testdata ->
             val innkommendeBehov: Behov = Behov
-                .newBuilder()
-                .setBehovId("123")
-                .setJournalpost(
-                    Journalpost
+                    .newBuilder()
+                    .setBehovId("123")
+                    .setMottaker(Mottaker("12345678912"))
+                    .setBehandleneEnhet("0000")
+                    .setHenvendelsesType(HenvendelsesType(
+                            Søknad.newBuilder().setVedtakstype("NY").build(),
+                            null,
+                            null))
+                    .setFagsakId(if (testdata[0]) "fagsak" else null)
+                    .setGsaksakId(if (testdata[1]) "gsaksak" else null)
+                    .setJournalpost(
+                            Journalpost
                         .newBuilder()
                         .setJournalpostId("12345")
-                        .setSøker(Søker("12345678912"))
-                        .setJournalpostType(JournalpostType.NY)
-                        .setBehandleneEnhet("0000")
-                        .setFagsakId(if (testdata[0]) "fagsak" else null)
-                        .setGsaksakId(if (testdata[1]) "gsaksak" else null)
                         .build()
                 )
                 .build()
@@ -128,7 +132,7 @@ class JournalføringGsakComponentTest {
 
         //Check if JournalføringGsak sets gsakSakId, by verifing the number of behovs without gsaksakid
         val withoutGsaksakId = behovsListe.filter { kanskjeBehandletBehov ->
-            kanskjeBehandletBehov.value().getJournalpost().getGsaksakId() == null
+            kanskjeBehandletBehov.value().getGsaksakId() == null
         }.size
         assertEquals(behovsToProcess + behovsMissingData, withoutGsaksakId)
     }
