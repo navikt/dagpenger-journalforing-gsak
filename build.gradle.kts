@@ -1,6 +1,6 @@
 plugins {
     id("application")
-    kotlin("jvm") version "1.2.70"
+    kotlin("jvm") version "1.3.10"
     id("com.diffplug.gradle.spotless") version "3.13.0"
     id("com.palantir.docker") version "0.20.1"
     id("com.palantir.git-version") version "0.11.0"
@@ -21,12 +21,13 @@ apply {
 }
 
 repositories {
-    mavenCentral()
+    jcenter()
+    maven("https://oss.sonatype.org/content/repositories/snapshots/")
     maven("http://packages.confluent.io/maven")
     maven("https://dl.bintray.com/kotlin/ktor")
     maven("https://dl.bintray.com/kotlin/kotlinx")
     maven("https://dl.bintray.com/kittinunf/maven")
-    maven("https://oss.sonatype.org/content/repositories/snapshots/")
+
 }
 
 val gitVersion: groovy.lang.Closure<Any> by extra
@@ -54,13 +55,13 @@ docker {
 val kotlinLoggingVersion = "1.4.9"
 val kafkaVersion = "2.0.0"
 val confluentVersion = "4.1.2"
-val ktorVersion = "0.9.5"
+val ktorVersion = "1.0.0"
 val prometheusVersion = "0.5.0"
 val fuelVersion = "1.15.0"
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("no.nav.dagpenger:streams:0.2.1-SNAPSHOT")
+    implementation("no.nav.dagpenger:streams:0.2.2-SNAPSHOT")
     implementation("no.nav.dagpenger:events:0.1.9-SNAPSHOT")
 
     implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
