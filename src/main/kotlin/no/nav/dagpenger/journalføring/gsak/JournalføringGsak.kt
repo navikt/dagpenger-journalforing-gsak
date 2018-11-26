@@ -4,6 +4,11 @@ package no.nav.dagpenger.journalføring.gsak
 import mu.KotlinLogging
 import no.nav.dagpenger.events.avro.Behov
 import no.nav.dagpenger.events.avro.Journalpost
+import no.nav.dagpenger.events.hasFagsakId
+import no.nav.dagpenger.events.hasGsakId
+import no.nav.dagpenger.events.isEttersending
+import no.nav.dagpenger.events.isGjenopptakSoknad
+import no.nav.dagpenger.events.isNySoknad
 import no.nav.dagpenger.oidc.StsOidcClient
 import no.nav.dagpenger.streams.KafkaCredential
 import no.nav.dagpenger.streams.Service
@@ -40,9 +45,7 @@ class JournalføringGsak(val env: Environment, val gsakClient: GsakClient) : Ser
 
         inngåendeJournalposter
             .peek { key, value -> LOGGER.info("Processing ${value.javaClass} with key $key") }
-            .filter { _, behov -> behov.getJournalpost().getFagsakId() != null }
-            .filter { _, behov -> behov.getJournalpost().getGsaksakId() == null }
-            .filter { _, behov -> filterJournalpostTypes(behov.getJournalpost().getJournalpostType()) }
+            .filter { _, behov -> shouldBeProcessed(behov) }
             .mapValues(this::addGsakSakId)
             .peek { key, value -> LOGGER.info("Producing ${value.javaClass} with key $key") }
             .toTopic(INNGÅENDE_JOURNALPOST, env.schemaRegistryUrl)
@@ -58,39 +61,30 @@ class JournalføringGsak(val env: Environment, val gsakClient: GsakClient) : Ser
         )
     }
 
-    private fun filterJournalpostTypes(journalpostType: JournalpostType): Boolean {
-        return when (journalpostType) {
-            NY, GJENOPPTAK, ETTERSENDING -> true
-            UKJENT, MANUELL -> false
-        }
-    }
-
     private fun addGsakSakId(behov: Behov): Behov {
-        val journalpost = behov.getJournalpost()
-
-        val sakId = when (journalpost.getJournalpostType()) {
-            NY -> createSak(journalpost, behov.getBehovId())
-            ETTERSENDING, GJENOPPTAK -> findSak(journalpost, behov.getBehovId())
-            else -> throw UnexpectedJournaltypeException("Unexpected journalposttype ${journalpost.getJournalpostType()}")
+        val sakId = when {
+            behov.isNySoknad() -> createSak(behov, behov.getBehovId())
+            behov.isEttersending() || behov.isGjenopptakSoknad() -> findSak(behov, behov.getBehovId())
+            else -> throw UnexpectedHenvendelsesTypeException("Unexpected henvendelsestype")
         }
 
-        journalpost.setGsaksakId(sakId)
+        behov.setGsaksakId(sakId)
 
         return behov
     }
 
-    private fun createSak(journalpost: Journalpost, correlationId: String): String {
+    private fun createSak(behov: Behov, correlationId: String): String {
         val sak = gsakClient.createSak(
-                journalpost.getSøker().getIdentifikator(),
-                journalpost.getFagsakId(),
+                behov.getMottaker().getIdentifikator(),
+                behov.getFagsakId(),
                 correlationId)
 
         return sak.id.toString()
     }
 
-    private fun findSak(journalpost: Journalpost, correlationId: String): String {
+    private fun findSak(behov: Behov, correlationId: String): String {
         val saker = gsakClient.findSak(
-                journalpost.getSøker().getIdentifikator(),
+                behov.getMottaker().getIdentifikator(),
                 correlationId)
 
         //TODO: Find correct sak
@@ -98,4 +92,7 @@ class JournalføringGsak(val env: Environment, val gsakClient: GsakClient) : Ser
     }
 }
 
-class UnexpectedJournaltypeException(override val message: String) : RuntimeException(message)
+fun shouldBeProcessed(behov: Behov): Boolean =
+        !behov.getTrengerManuellBehandling() && behov.hasFagsakId() && !behov.hasGsakId()
+
+class UnexpectedHenvendelsesTypeException (override val message: String) : RuntimeException(message)
