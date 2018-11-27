@@ -1,9 +1,7 @@
 package no.nav.dagpenger.journalføring.gsak
 
-
 import mu.KotlinLogging
 import no.nav.dagpenger.events.avro.Behov
-import no.nav.dagpenger.events.avro.Journalpost
 import no.nav.dagpenger.events.hasFagsakId
 import no.nav.dagpenger.events.hasGsakId
 import no.nav.dagpenger.events.isEttersending
@@ -14,6 +12,7 @@ import no.nav.dagpenger.streams.KafkaCredential
 import no.nav.dagpenger.streams.Service
 import no.nav.dagpenger.streams.Topics.INNGÅENDE_JOURNALPOST
 import no.nav.dagpenger.streams.consumeTopic
+import no.nav.dagpenger.streams.kbranch
 import no.nav.dagpenger.streams.streamConfig
 import no.nav.dagpenger.streams.toTopic
 import org.apache.kafka.streams.KafkaStreams
@@ -43,12 +42,20 @@ class JournalføringGsak(val env: Environment, val gsakClient: GsakClient) : Ser
         val builder = StreamsBuilder()
         val inngåendeJournalposter = builder.consumeTopic(INNGÅENDE_JOURNALPOST, env.schemaRegistryUrl)
 
-        inngåendeJournalposter
+        val (needsNewGsakSak, hasExistingGsakSak) = inngåendeJournalposter
             .peek { key, value -> LOGGER.info("Processing ${value.javaClass} with key $key") }
             .filter { _, behov -> shouldBeProcessed(behov) }
-            .mapValues(this::addGsakSakId)
-            .peek { key, value -> LOGGER.info("Producing ${value.javaClass} with key $key") }
-            .toTopic(INNGÅENDE_JOURNALPOST, env.schemaRegistryUrl)
+            .kbranch(
+                { _, behov -> behov.isNySoknad() },
+                { _, behov -> behov.isGjenopptakSoknad() || behov.isEttersending() })
+
+        needsNewGsakSak.mapValues(this::createSak)
+
+        hasExistingGsakSak.mapValues(this::findSak)
+
+        needsNewGsakSak.merge(hasExistingGsakSak)
+                .peek { key, value -> LOGGER.info("Producing ${value.javaClass} with key $key") }
+                .toTopic(INNGÅENDE_JOURNALPOST, env.schemaRegistryUrl)
 
         return KafkaStreams(builder.build(), this.getConfig())
     }
@@ -61,38 +68,26 @@ class JournalføringGsak(val env: Environment, val gsakClient: GsakClient) : Ser
         )
     }
 
-    private fun addGsakSakId(behov: Behov): Behov {
-        val sakId = when {
-            behov.isNySoknad() -> createSak(behov, behov.getBehovId())
-            behov.isEttersending() || behov.isGjenopptakSoknad() -> findSak(behov, behov.getBehovId())
-            else -> throw UnexpectedHenvendelsesTypeException("Unexpected henvendelsestype")
-        }
-
-        behov.setGsaksakId(sakId)
-
-        return behov
-    }
-
-    private fun createSak(behov: Behov, correlationId: String): String {
+    private fun createSak(behov: Behov): Behov {
         val sak = gsakClient.createSak(
                 behov.getMottaker().getIdentifikator(),
                 behov.getFagsakId(),
-                correlationId)
+                behov.getBehovId())
 
-        return sak.id.toString()
+        behov.setGsaksakId(sak.id.toString())
+        return behov
     }
 
-    private fun findSak(behov: Behov, correlationId: String): String {
+    private fun findSak(behov: Behov): Behov {
         val saker = gsakClient.findSak(
                 behov.getMottaker().getIdentifikator(),
-                correlationId)
+                behov.getBehovId())
 
         //TODO: Find correct sak
-        return saker[0].id.toString()
+        behov.setGsaksakId(saker[0].id.toString())
+        return behov
     }
 }
 
 fun shouldBeProcessed(behov: Behov): Boolean =
         !behov.getTrengerManuellBehandling() && behov.hasFagsakId() && !behov.hasGsakId()
-
-class UnexpectedHenvendelsesTypeException (override val message: String) : RuntimeException(message)
