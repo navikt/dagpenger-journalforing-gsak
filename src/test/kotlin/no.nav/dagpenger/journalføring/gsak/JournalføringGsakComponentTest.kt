@@ -10,6 +10,7 @@ import no.nav.dagpenger.events.avro.HenvendelsesType
 import no.nav.dagpenger.events.avro.Journalpost
 import no.nav.dagpenger.events.avro.Mottaker
 import no.nav.dagpenger.events.avro.Søknad
+import no.nav.dagpenger.events.avro.Vedtakstype
 import no.nav.dagpenger.streams.Topics
 import no.nav.dagpenger.streams.Topics.INNGÅENDE_JOURNALPOST
 import org.apache.kafka.clients.CommonClientConfigs
@@ -24,6 +25,7 @@ import org.junit.BeforeClass
 import org.junit.Test
 import java.time.Duration
 import java.util.Properties
+import kotlin.random.Random
 import kotlin.test.assertEquals
 
 class JournalføringGsakComponentTest {
@@ -42,16 +44,55 @@ class JournalføringGsakComponentTest {
             topics = listOf(Topics.INNGÅENDE_JOURNALPOST.name)
         )
 
+        val env = Environment(
+            gsakSakUrl = "local",
+            oicdStsUrl = "local",
+            username = username,
+            password = password,
+            bootstrapServersUrl = embeddedEnvironment.brokersURL,
+            schemaRegistryUrl = embeddedEnvironment.schemaRegistry!!.url,
+            httpPort = getAvailablePort()
+        )
+
+        val gsak = JournalføringGsak(env, DummyGsakClient())
+
+        val behovProducer = behovProducer(env)
+
+        private fun behovProducer(env: Environment): KafkaProducer<String, Behov> {
+            val producer: KafkaProducer<String, Behov> = KafkaProducer(Properties().apply {
+                put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, env.schemaRegistryUrl)
+                put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, env.bootstrapServersUrl)
+                put(ProducerConfig.CLIENT_ID_CONFIG, "dummy-behov-producer-${Random.nextInt()}")
+                put(
+                    ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
+                    Topics.INNGÅENDE_JOURNALPOST.keySerde.serializer().javaClass.name
+                )
+                put(
+                    ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+                    Topics.INNGÅENDE_JOURNALPOST.valueSerde.serializer().javaClass.name
+                )
+                put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT")
+                put(SaslConfigs.SASL_MECHANISM, "PLAIN")
+                put(
+                    SaslConfigs.SASL_JAAS_CONFIG,
+                    "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"${env.username}\" password=\"${env.password}\";"
+                )
+            })
+
+            return producer
+        }
+
         @BeforeClass
         @JvmStatic
         fun setup() {
             embeddedEnvironment.start()
+            gsak.start()
         }
 
         @AfterClass
         @JvmStatic
         fun teardown() {
-            embeddedEnvironment.tearDown()
+            gsak.stop()
         }
     }
 
@@ -61,7 +102,7 @@ class JournalføringGsakComponentTest {
     }
 
     @Test
-    fun ` Component test of JournalføringGsak`() {
+    fun ` Processes the right behovs `() {
 
         //Test data: [hasFagsakId, hasGsaksakId]
         val innkommendeBehov = listOf(
@@ -80,35 +121,17 @@ class JournalføringGsakComponentTest {
         val behovsToProcess = innkommendeBehov.filter { it[0] && !it[1] }.size
         val behovsMissingData = innkommendeBehov.filter { !it[0] && !it[1] }.size
 
-        // given an environment
-        val env = Environment(
-            gsakSakUrl = "local",
-            oicdStsUrl = "local",
-            username = username,
-            password = password,
-            bootstrapServersUrl = embeddedEnvironment.brokersURL,
-            schemaRegistryUrl = embeddedEnvironment.schemaRegistry!!.url,
-            httpPort = getAvailablePort()
-        )
-
-        val ruting = JournalføringGsak(env, DummyGsakClient())
-
-        //produce behov...
-
-        val behovProducer = behovProducer(env)
-
-        ruting.start()
-
+        val behovId = "1"
         innkommendeBehov.forEach { testdata ->
             val innkommendeBehov: Behov = Behov
                     .newBuilder()
-                    .setBehovId("123")
+                    .setBehovId(behovId)
                     .setMottaker(Mottaker("12345678912"))
                     .setBehandleneEnhet("0000")
-                    .setHenvendelsesType(HenvendelsesType(
-                            Søknad.newBuilder().setVedtakstype("NY").build(),
-                            null,
-                            null))
+                    .setHenvendelsesType(
+                            HenvendelsesType.newBuilder().setSøknad(
+                                    Søknad.newBuilder().setVedtakstype(Vedtakstype.NY_RETTIGHET).build()
+                            ).build())
                     .setFagsakId(if (testdata[0]) "fagsak" else null)
                     .setGsaksakId(if (testdata[1]) "gsaksak" else null)
                     .setJournalpost(
@@ -122,10 +145,10 @@ class JournalføringGsakComponentTest {
             LOGGER.info { "Produced -> ${record.topic()}  to offset ${record.offset()}" }
         }
 
-        val behovConsumer: KafkaConsumer<String, Behov> = behovConsumer(env)
-        val behovsListe = behovConsumer.poll(Duration.ofSeconds(5)).toList()
-
-        ruting.stop()
+        val behovConsumer: KafkaConsumer<String, Behov> = behovConsumer(env, "test-consumer-1")
+        val behovsListe = behovConsumer.poll(Duration.ofSeconds(5))
+                .filter {record -> record.value().getBehovId() == behovId}
+                .toList()
 
         //Verify the number of produced messages
         assertEquals(innkommendeBehov.size + behovsToProcess, behovsListe.size)
@@ -135,6 +158,54 @@ class JournalføringGsakComponentTest {
             kanskjeBehandletBehov.value().getGsaksakId() == null
         }.size
         assertEquals(behovsToProcess + behovsMissingData, withoutGsaksakId)
+    }
+
+    @Test
+    fun ` Finds and creates saker `() {
+
+        //Test data: Vedtakstype
+        val innkommendeBehov = listOf(
+                Vedtakstype.NY_RETTIGHET,
+                Vedtakstype.NY_RETTIGHET,
+                Vedtakstype.GJENOPPTAK,
+                Vedtakstype.GJENOPPTAK,
+                Vedtakstype.NY_RETTIGHET,
+                Vedtakstype.GJENOPPTAK
+        )
+
+        val behovsToProcess = innkommendeBehov.size
+
+        val behovId = "2"
+        innkommendeBehov.forEach { testdata ->
+            val innkommendeBehov: Behov = Behov
+                    .newBuilder()
+                    .setBehovId(behovId)
+                    .setMottaker(Mottaker("12345678912"))
+                    .setBehandleneEnhet("0000")
+                    .setHenvendelsesType(
+                            HenvendelsesType.newBuilder().setSøknad(
+                                    Søknad.newBuilder().setVedtakstype(testdata).build()
+                            ).build())
+                    .setFagsakId("fagsak")
+                    .setJournalpost(
+                            Journalpost
+                                    .newBuilder()
+                                    .setJournalpostId("12345")
+                                    .build()
+                    )
+                    .build()
+            val record = behovProducer.send(ProducerRecord(INNGÅENDE_JOURNALPOST.name, innkommendeBehov)).get()
+            LOGGER.info { "Produced -> ${record.topic()}  to offset ${record.offset()}" }
+        }
+
+        val behovConsumer: KafkaConsumer<String, Behov> = behovConsumer(env, "test-consumer-2")
+        val behovsListe = behovConsumer.poll(Duration.ofSeconds(5))
+                .filter {record -> record.value().getBehovId() == behovId}
+                .toList()
+
+        //Verify the number of produced messages
+        assertEquals(innkommendeBehov.size + behovsToProcess, behovsListe.size)
+
     }
 
     class DummyGsakClient : GsakClient {
@@ -147,34 +218,10 @@ class JournalføringGsakComponentTest {
         }
     }
 
-    private fun behovProducer(env: Environment): KafkaProducer<String, Behov> {
-        val producer: KafkaProducer<String, Behov> = KafkaProducer(Properties().apply {
-            put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, env.schemaRegistryUrl)
-            put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, env.bootstrapServersUrl)
-            put(ProducerConfig.CLIENT_ID_CONFIG, "dummy-behov-producer")
-            put(
-                ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-                Topics.INNGÅENDE_JOURNALPOST.keySerde.serializer().javaClass.name
-            )
-            put(
-                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-                Topics.INNGÅENDE_JOURNALPOST.valueSerde.serializer().javaClass.name
-            )
-            put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT")
-            put(SaslConfigs.SASL_MECHANISM, "PLAIN")
-            put(
-                SaslConfigs.SASL_JAAS_CONFIG,
-                "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"${env.username}\" password=\"${env.password}\";"
-            )
-        })
-
-        return producer
-    }
-
-    private fun behovConsumer(env: Environment): KafkaConsumer<String, Behov> {
+    private fun behovConsumer(env: Environment, groupId: String): KafkaConsumer<String, Behov> {
         val consumer: KafkaConsumer<String, Behov> = KafkaConsumer(Properties().apply {
             put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, env.schemaRegistryUrl)
-            put(ConsumerConfig.GROUP_ID_CONFIG, "test-dagpenger-gsak-consumer")
+            put(ConsumerConfig.GROUP_ID_CONFIG, groupId)
             put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.bootstrapServersUrl)
             put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
             put(
