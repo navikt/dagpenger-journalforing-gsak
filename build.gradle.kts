@@ -22,7 +22,6 @@ repositories {
     maven("https://dl.bintray.com/kotlin/ktor")
     maven("https://dl.bintray.com/kotlin/kotlinx")
     maven("https://dl.bintray.com/kittinunf/maven")
-
 }
 
 val gitVersion: groovy.lang.Closure<Any> by extra

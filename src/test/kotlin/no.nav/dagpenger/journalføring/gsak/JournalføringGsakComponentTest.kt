@@ -147,7 +147,7 @@ class JournalføringGsakComponentTest {
 
         val behovConsumer: KafkaConsumer<String, Behov> = behovConsumer(env, "test-consumer-1")
         val behovsListe = behovConsumer.poll(Duration.ofSeconds(5))
-                .filter {record -> record.value().getBehovId() == behovId}
+                .filter { record -> record.value().getBehovId() == behovId }
                 .toList()
 
         //Verify the number of produced messages
@@ -200,12 +200,11 @@ class JournalføringGsakComponentTest {
 
         val behovConsumer: KafkaConsumer<String, Behov> = behovConsumer(env, "test-consumer-2")
         val behovsListe = behovConsumer.poll(Duration.ofSeconds(5))
-                .filter {record -> record.value().getBehovId() == behovId}
+                .filter { record -> record.value().getBehovId() == behovId }
                 .toList()
 
         //Verify the number of produced messages
         assertEquals(innkommendeBehov.size + behovsToProcess, behovsListe.size)
-
     }
 
     class DummyGsakClient : GsakClient {

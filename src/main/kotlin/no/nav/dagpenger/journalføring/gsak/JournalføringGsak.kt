@@ -1,9 +1,7 @@
 package no.nav.dagpenger.journalføring.gsak
 
-
 import mu.KotlinLogging
 import no.nav.dagpenger.events.avro.Behov
-import no.nav.dagpenger.events.avro.Journalpost
 import no.nav.dagpenger.events.hasFagsakId
 import no.nav.dagpenger.events.hasGsakId
 import no.nav.dagpenger.events.isEttersending
@@ -80,7 +78,7 @@ class JournalføringGsak(val env: Environment, val gsakClient: GsakClient) : Ser
         return behov
     }
 
-    private fun findSak(behov: Behov): Behov{
+    private fun findSak(behov: Behov): Behov {
         val saker = gsakClient.findSak(
                 behov.getMottaker().getIdentifikator(),
                 behov.getBehovId())
@@ -93,4 +91,3 @@ class JournalføringGsak(val env: Environment, val gsakClient: GsakClient) : Ser
 
 fun shouldBeProcessed(behov: Behov): Boolean =
         !behov.getTrengerManuellBehandling() && behov.hasFagsakId() && !behov.hasGsakId()
-
