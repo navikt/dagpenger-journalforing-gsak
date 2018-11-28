@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/navikt/dagpenger-journalforing-gsak.svg?branch=master)](https://travis-ci.org/navikt/dagpenger-journalforing-gsak)
+
 # Dagpenger-journalføring-gsak
 
 Tar imot meldinger fra dagpenger-journalforing-mottak og enten finner eksisterende sak eller oppretter
