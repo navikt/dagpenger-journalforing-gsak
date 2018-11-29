@@ -12,10 +12,12 @@ jobs:
     - stage: Deploy
       if: branch = master
       env:
-        - VERSION=$(./gradlew -q printVersion)
+        - VERSION=$(git rev-parse --short HEAD)
       deploy:
         provider: script
-        script: docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} && ./gradlew dockerPush${VERSION}
+        script:
+          - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
+          - "./gradlew dockerPush${VERSION} -x check"
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
