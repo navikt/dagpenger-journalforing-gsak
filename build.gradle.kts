@@ -97,7 +97,7 @@ pitest {
     timestampedReports = false
 }
 
-tasks.getByName("check").dependsOn("pitest")
+tasks.getByName("test").finalizedBy("pitest")
 
 tasks.withType<Test> {
     testLogging {
