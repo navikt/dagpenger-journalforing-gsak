@@ -35,7 +35,7 @@ application {
 }
 
 docker {
-    name = "navikt/${application.applicationName}"
+    name = "naviktdocker/${application.applicationName}"
     buildArgs(
         mapOf(
             "APP_NAME" to application.applicationName,
