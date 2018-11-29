@@ -7,9 +7,13 @@ env:
     - secure: ApTBr4CPvobWYfm+YfdnIdbgAHS4ODAPRgoNTk4guSYNv3/Pwvy5Vy9DDPp9lQYfYJQR10CWVTaDKKQEhycM1Snp3rIhl8DnPmnEAKTETE17XkOp1LOr0gWESupXMDO/GeC5qUwdTEVyaLQtRjpSTgnC4DxG64YNjmSaOAlcS9qJW0qtmOorj2b5IKG2rkTY9lL3hAJ+B5qmbWcRo23Ab3FUfMNJdIFJtVr59VvD/vgmK2x3B7jxfX8XhUm/4LwDVedFtSZ+fcAyBAxq63qtkf4GEoEJktnHPN/LAW/V5tnDriyp8oH2mYleaixoJyDX6/SyZQeqzyNb9nVF+7Gi/xnzUy27LB/ok0l8L9x1j0RrR0vWTj4/DzPi63hIIDsgXwaAiq9huWa/QcCB4WVkOI8BceHWHGy4YGY62fXptCvQrBgN8kPAek1z5LXr+vU2DCrbabjQTXAw+XnHQ2lehFG+S+cDhai+z0L9ALO9LrkmInA6BjhfFqQqsNjVUy/71dssFwzMDGmXFAcpC9N/n6oNd2A0VIcPNnAU3WxrUeF1hHW82CPwMiWeHWhCoUZac+z0IVw19gswNtuRZbuETcAia8yZKTNA2GgJl1Mue0UqPyWzTyHLIskDGZC3iQakB+P4w13cwmTcxJqGhwn7apr7dMzzIM7ihMeFXRatkpQ=
 before_install:
   - export VERSION=$(./gradlew -q printVersion)
-script:
-  - echo $VERSION
-  - "./gradlew build"
+jobs:
+  include:
+    - stage: Tests
+      script: ./gradlew check
+    - stage: Deploy
+      if: branch = master
+      script: ./gradlew build
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
