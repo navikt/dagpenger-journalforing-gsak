@@ -1,8 +1,11 @@
 language: java
 jdk:
   - openjdk11
+
+before_install:
+  - export VERSION=$(./gradlew -q printVersion)
 script:
-  - "./gradlew build --stacktrace"
+  - "./gradlew build"
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
