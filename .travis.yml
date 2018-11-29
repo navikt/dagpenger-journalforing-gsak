@@ -11,13 +11,12 @@ jobs:
       script: ./gradlew check
     - stage: Deploy
       if: branch = master
+      script: skip
       env:
         - VERSION=$(git rev-parse --short HEAD)
       deploy:
         provider: script
-        script:
-          - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
-          - "./gradlew dockerPush${VERSION} -x check"
+        script:  'echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin && ./gradlew dockerPush${VERSION} -x check'
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
