@@ -1,11 +1,15 @@
 language: java
 jdk:
   - openjdk11
+env:
+  global:
+    - secure: AAaPw078X2Gh1i3chCrgVv+PpmSP0fzZn2mXu95D3/uhFQA0nFWemBZnrBk5Nhyq+roM8MHTZ5BXkYddK2HjjOzt/YsdG0IEogmpMDNiAhMe2bSbRw14G6FxRGww6M8bcfAjiyhJv3B1OyRKnWQyxfPseTvjJpNtw3+L9Ms2zxd8V17AJCn8i27ZRU1fUdwGUp4dnsSu+D76Mf3Iyu99bEkDV6/K/6Hu7EyGknBhiIMeww2+1xPydm77qRMBd7E+KnwMwlHN20IRmQXipaN2Gg/zRxDPY93jjUsMgj4rCjArqBs/TM5CrBapNg6+XOujjx3KWgjZbBDvlR/tIlOcaUymrkxN9YBum9SpyB8oDKbz+X/k5vohkTV+8+yKD1/5dPMwf6PCKKUdEv46ZK2KuP5XuOF9SdXjfRiYwRoC+zEDTEYUpA04nLIqERMymIu1CI+BfHjDnvkNcteOblhbrEc0y1+EdnKtJqaj21V8gLUi321JNujQcHezKJnVwMuYbVjUTI0vYr/24SizdFjWUy4/NfbXaTzYI3AKvCdWYXkxwrmNh8ISIyGjF6tg6OFh68/GdP4oYmct8bYQeULfdLFu0QJXeXBRzFRZv8N5w/Umj8JYqEmHJcu+C4Dgwt5Dkmgupr18m+3vnR5pk7PgCetfGybnXjETZIKyL5ypOtw=
+    - secure: ApTBr4CPvobWYfm+YfdnIdbgAHS4ODAPRgoNTk4guSYNv3/Pwvy5Vy9DDPp9lQYfYJQR10CWVTaDKKQEhycM1Snp3rIhl8DnPmnEAKTETE17XkOp1LOr0gWESupXMDO/GeC5qUwdTEVyaLQtRjpSTgnC4DxG64YNjmSaOAlcS9qJW0qtmOorj2b5IKG2rkTY9lL3hAJ+B5qmbWcRo23Ab3FUfMNJdIFJtVr59VvD/vgmK2x3B7jxfX8XhUm/4LwDVedFtSZ+fcAyBAxq63qtkf4GEoEJktnHPN/LAW/V5tnDriyp8oH2mYleaixoJyDX6/SyZQeqzyNb9nVF+7Gi/xnzUy27LB/ok0l8L9x1j0RrR0vWTj4/DzPi63hIIDsgXwaAiq9huWa/QcCB4WVkOI8BceHWHGy4YGY62fXptCvQrBgN8kPAek1z5LXr+vU2DCrbabjQTXAw+XnHQ2lehFG+S+cDhai+z0L9ALO9LrkmInA6BjhfFqQqsNjVUy/71dssFwzMDGmXFAcpC9N/n6oNd2A0VIcPNnAU3WxrUeF1hHW82CPwMiWeHWhCoUZac+z0IVw19gswNtuRZbuETcAia8yZKTNA2GgJl1Mue0UqPyWzTyHLIskDGZC3iQakB+P4w13cwmTcxJqGhwn7apr7dMzzIM7ihMeFXRatkpQ=
 before_install:
   - export VERSION=$(./gradlew -q printVersion)
 script:
+  - echo $VERSION
   - "./gradlew build"
-  - "echo $VERSION"
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
