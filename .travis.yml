@@ -17,16 +17,6 @@ jobs:
         provider: script
         script: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME"
           --password-stdin && ./gradlew dockerPush${VERSION} -x check
-    - stage: Release to github
-      if: branch = master
-      script: skip
-      deploy:
-        provider: releases
-        api_key:
-          secure: cQCiJUuhLEkSjXEYEeFKRvfGc83cd560jd5OD1G69NpXU7HC5zm51hpaKOwY0L6QuwLiQoha+mobAjLDUOswHS2Y3s2eLba1Jw85kRkXcFyayh1FhKONlGIbE879M16GqVc5LiN/jWaNMQdtdIQQo4MTqXWl1CviraLDXQ6+iUqJVvWo8Qy5lEX/oe920fMn4bRMwsgph1NBhHa3Xp2pAiiVEx0tKrZ8MxOfb3MVpqkH9RB0cI72UMJzjw9hrO8tgz1UBflkRppfLSs7XijvINzn7MZtSYgL9yNTp0p8PC1uqpYLYpjVSF3C/hKK5PKDOGuBbVjRIvJyjxUZOVXrJIq84D+wswNMmZEG+1OHj7YeOasoGjG9wq6aPffA2bRXJHzEkvhx1Ip60ayisQvbJ2e78/+XFHTK74+4+QRFVdbuUvtSNXAstMe8GPvrhrS6rGOz4chpA5/452GFhApkIaG3P3RQ+1oL1E47A43MxDpFaeKAc7cH9Mol6xTfPbhzstF4piQKJ+n1GO2hMg3v+VNtqvP8GzhQ44ilNEHuOgSq3Xu82Vl/Umt85eKDMMlXCiDl9DBlbwrAtzPIwvCSJ2/w9anJfuwQctI3UZdRMQSkbez2HOlZE8x80xbSLP7lJrIdEgRtWqH3mMxReCMf9j7pd//7lBUCQEmI+COMotw=
-        file: nais.yml
-        on:
-          repo: navikt/dagpenger-journalforing-gsak
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
