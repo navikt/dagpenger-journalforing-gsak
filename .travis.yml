@@ -20,7 +20,7 @@ stages:
 jobs:
   include:
     - stage: Tests
-      script: "./gradlew check --info --stacktrace"
+      script: "./gradlew check --info"
     - stage: Deploy
       if: branch = master
       script: skip
