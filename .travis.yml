@@ -3,7 +3,7 @@ jdk:
   - openjdk11
 before_install:
   - openssl aes-256-cbc -K $encrypted_8baa07224b9d_key -iv $encrypted_8baa07224b9d_iv
-    -in team-dagpenger.private-key.pem.enc -out team-dagpenger.private-key.pem -d
+    -in travis/team-dagpenger.private-key.pem.enc -out team-dagpenger.private-key.pem -d
 env:
   global:
     - VERSION=$(git rev-parse --short HEAD)
