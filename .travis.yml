@@ -30,9 +30,9 @@ jobs:
       deploy:
         provider: script
         script: |
-        echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
-        ./gradlew dockerPush${VERSION} -x check
-        curl -X POST -i -H "Authorization: token $GH_TOKEN"  https://api.github.com/repos/navikt/dagpenger-journalforing-gsak/deployments --data '{ ref: $VERSION, "description: "Deploy from travis", "required_contexts": []  }'
+          echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
+          ./gradlew dockerPush${VERSION} -x check
+          curl -X POST -i -H "Authorization: token $GH_TOKEN"  https://api.github.com/repos/navikt/dagpenger-journalforing-gsak/deployments --data '{ ref: $VERSION, "description: "Deploy from travis", "required_contexts": []  }'
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
