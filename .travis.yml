@@ -12,8 +12,8 @@ before_install:
     -in travis/team-dagpenger.private-key.pem.enc -out travis/team-dagpenger.private-key.pem
     -d
   - git clone https://github.com/navikt/github-apps-support.git
-    - export PATH=`pwd`/github-apps-support/bin:$PATH - export GH_TOKEN=$(generate-installation-token.sh
-    `generate-jwt.sh ./travis/team-dagpenger.private-key.pem $GITHUB_APP_ID`)
+  - export PATH=`pwd`/github-apps-support/bin:$PATH
+  - export GH_TOKEN=$(generate-installation-token.sh`generate-jwt.sh ./travis/team-dagpenger.private-key.pem $GITHUB_APP_ID`)
 stages:
   - Tests
   - Deploy
