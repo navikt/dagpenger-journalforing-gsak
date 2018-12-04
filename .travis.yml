@@ -1,39 +1,39 @@
 language: java
 jdk:
-- openjdk11
+  - openjdk11
 env:
   global:
-  - VERSION=$(git rev-parse --short HEAD)
-  - GITHUB_APP_ID=21626
-  - secure: XOxieYQ16m5XWttIpU6q7VTi+GwkZVAbgUiCbGFSxWxDb9O9jJOfdYF/Z+HuPpD0Lzx8x5EZ16fKW2wgM75zvwKATGxIddxJdhC+chSog/jMhyFxKs20ErZoP0m2YKhOtm9adSoZAeEJcFBiNnIL2dB8gaLgTls2i4xpMd6UqhmstP+R3XyOIlS8kkm+TqcbDyQ0RJkoWXX9Gu0FLX6p1BKxPLI5TfgnAuVJW0dd4gSlxYns6rR0EX1/99CvL7Gq42kdgeeO2y8UgusEgeeZjBtKdRq7gwTmlLmif+LRGIOzBETzTRlwXtaiI+zzflBbTriYIUbAIYN/iFbVJgF71POISH+MXkFgQqa75Ozr3+QG6n6HT3l3RfICa9r6fsXOt1miOtq2BfNQgqHApPAOMjp4uitWqZeeeMxFwb5MLomnyTPgTC9c7Kr9DiegcHYZTTINQAi0XwbXBffJJCeOECu4YHjQ5E4KLlurVqhgZ/jFLupoeWfcUvwvpAlqvnVLqV1zRkGZY5nffstOXhkNJu090ikWOGztyijBBUD8N78dnweoOZ3MWLVJV9PVRkycVgaxbz9/tOGEuEk6zVuC6cuw+7AAplas5THXYcYKvE5MomnE6DF2e6Jrn3cjJ+Obckm3hgZeLzV6AGOfd4c2fxk37Zh19JCXSZmPDb8O9jo=
-  - secure: T+Q+qavugzs2VclUig6dc60dPCe1fTX7vZ2XQlrggXkYl/Hvq34//eVMxnVXF1ly470+6K6uEw9f/wkGv0zzw7oWafyRzM8BSvOdubABN8cJ2x0RJEHQEkByBdRE1Adl+tw0+SBXG+DJXmhLkfu7L2RIdOZkrQ4fAVGkz4SnjnEgIL8QW3IhNo3vUagwmxhqCiY95bmXzHj+baSlw59khoY+m9sMBpeQOzZTsqa6ov/3PQw7HvB8c8aLfFKTRpAuN2SwRBB3ZvQ8LNMQNOhSwvbu45H81vf8ZmuKyHZFMDwSk3VhPIxs/XsyonhD4g9o5CWIGtStBKHOQU82wwW+nC9ofnupf0wxALXhK39+ALJJCCnveoPQFy0t+cvaw+jUQlLpNNipWRMjykuNi0CAcWU3XhmFl7K8ALW15lcxZ4KQg5oMPTSRmelrHoP0Spq8bdUmsHrZ9bj+FFT0C2RW68GoF9L/g7+6XTJFPvwLiPTnF4QuUsBlLKfaTFUhIlpnjYdPPdLI14eX87E4uxbhOv4P/Sh2qm6hgadiK3iU9C7PzOcZ8uXFkqZG/Md1/ZFBc3cgxjGFJFHUfnJBA4KYHKNjGri2OVW1azsv5R34y8w4lFYvy24ApGWx5Holy7JjwppE5iik5btYpAhiZ9mHSCs7+GXAPvL771jLPoXxEBQ=
+    - VERSION=$(git rev-parse --short HEAD)
+    - GITHUB_APP_ID=21626
+    - secure: XOxieYQ16m5XWttIpU6q7VTi+GwkZVAbgUiCbGFSxWxDb9O9jJOfdYF/Z+HuPpD0Lzx8x5EZ16fKW2wgM75zvwKATGxIddxJdhC+chSog/jMhyFxKs20ErZoP0m2YKhOtm9adSoZAeEJcFBiNnIL2dB8gaLgTls2i4xpMd6UqhmstP+R3XyOIlS8kkm+TqcbDyQ0RJkoWXX9Gu0FLX6p1BKxPLI5TfgnAuVJW0dd4gSlxYns6rR0EX1/99CvL7Gq42kdgeeO2y8UgusEgeeZjBtKdRq7gwTmlLmif+LRGIOzBETzTRlwXtaiI+zzflBbTriYIUbAIYN/iFbVJgF71POISH+MXkFgQqa75Ozr3+QG6n6HT3l3RfICa9r6fsXOt1miOtq2BfNQgqHApPAOMjp4uitWqZeeeMxFwb5MLomnyTPgTC9c7Kr9DiegcHYZTTINQAi0XwbXBffJJCeOECu4YHjQ5E4KLlurVqhgZ/jFLupoeWfcUvwvpAlqvnVLqV1zRkGZY5nffstOXhkNJu090ikWOGztyijBBUD8N78dnweoOZ3MWLVJV9PVRkycVgaxbz9/tOGEuEk6zVuC6cuw+7AAplas5THXYcYKvE5MomnE6DF2e6Jrn3cjJ+Obckm3hgZeLzV6AGOfd4c2fxk37Zh19JCXSZmPDb8O9jo=
+    - secure: T+Q+qavugzs2VclUig6dc60dPCe1fTX7vZ2XQlrggXkYl/Hvq34//eVMxnVXF1ly470+6K6uEw9f/wkGv0zzw7oWafyRzM8BSvOdubABN8cJ2x0RJEHQEkByBdRE1Adl+tw0+SBXG+DJXmhLkfu7L2RIdOZkrQ4fAVGkz4SnjnEgIL8QW3IhNo3vUagwmxhqCiY95bmXzHj+baSlw59khoY+m9sMBpeQOzZTsqa6ov/3PQw7HvB8c8aLfFKTRpAuN2SwRBB3ZvQ8LNMQNOhSwvbu45H81vf8ZmuKyHZFMDwSk3VhPIxs/XsyonhD4g9o5CWIGtStBKHOQU82wwW+nC9ofnupf0wxALXhK39+ALJJCCnveoPQFy0t+cvaw+jUQlLpNNipWRMjykuNi0CAcWU3XhmFl7K8ALW15lcxZ4KQg5oMPTSRmelrHoP0Spq8bdUmsHrZ9bj+FFT0C2RW68GoF9L/g7+6XTJFPvwLiPTnF4QuUsBlLKfaTFUhIlpnjYdPPdLI14eX87E4uxbhOv4P/Sh2qm6hgadiK3iU9C7PzOcZ8uXFkqZG/Md1/ZFBc3cgxjGFJFHUfnJBA4KYHKNjGri2OVW1azsv5R34y8w4lFYvy24ApGWx5Holy7JjwppE5iik5btYpAhiZ9mHSCs7+GXAPvL771jLPoXxEBQ=
 before_install:
   - openssl aes-256-cbc -K $encrypted_8baa07224b9d_key -iv $encrypted_8baa07224b9d_iv
     -in team-dagpenger.private-key.pem.enc -out travis/team-dagpenger.private-key.pem
     -d
-- git clone https://github.com/navikt/github-apps-support.git
-  - export PATH=`pwd`/github-apps-support/bin:$PATH - export GH_TOKEN=$(generate-installation-token.sh
+  - git clone https://github.com/navikt/github-apps-support.git
+    - export PATH=`pwd`/github-apps-support/bin:$PATH - export GH_TOKEN=$(generate-installation-token.sh
     `generate-jwt.sh ./travis/team-dagpenger.private-key.pem $GITHUB_APP_ID`)
 stages:
-- Tests
-- Deploy
+  - Tests
+  - Deploy
 jobs:
   include:
-  - stage: Tests
-    script: "./gradlew check --info"
-  - stage: Deploy
-    if: branch = master
-    script: skip
-    deploy:
-      provider: script
-      script: travis/deploy.sh
+    - stage: Tests
+      script: "./gradlew check --info"
+    - stage: Deploy
+      if: branch = master
+      script: skip
+      deploy:
+        provider: script
+        script: travis/deploy.sh
 before_cache:
-- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
-  - "$HOME/.gradle/caches/"
-  - "$HOME/.gradle/wrapper/"
+    - "$HOME/.gradle/caches/"
+    - "$HOME/.gradle/wrapper/"
 notifications:
   slack:
     rooms:
