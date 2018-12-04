@@ -9,7 +9,7 @@ env:
     - secure: T+Q+qavugzs2VclUig6dc60dPCe1fTX7vZ2XQlrggXkYl/Hvq34//eVMxnVXF1ly470+6K6uEw9f/wkGv0zzw7oWafyRzM8BSvOdubABN8cJ2x0RJEHQEkByBdRE1Adl+tw0+SBXG+DJXmhLkfu7L2RIdOZkrQ4fAVGkz4SnjnEgIL8QW3IhNo3vUagwmxhqCiY95bmXzHj+baSlw59khoY+m9sMBpeQOzZTsqa6ov/3PQw7HvB8c8aLfFKTRpAuN2SwRBB3ZvQ8LNMQNOhSwvbu45H81vf8ZmuKyHZFMDwSk3VhPIxs/XsyonhD4g9o5CWIGtStBKHOQU82wwW+nC9ofnupf0wxALXhK39+ALJJCCnveoPQFy0t+cvaw+jUQlLpNNipWRMjykuNi0CAcWU3XhmFl7K8ALW15lcxZ4KQg5oMPTSRmelrHoP0Spq8bdUmsHrZ9bj+FFT0C2RW68GoF9L/g7+6XTJFPvwLiPTnF4QuUsBlLKfaTFUhIlpnjYdPPdLI14eX87E4uxbhOv4P/Sh2qm6hgadiK3iU9C7PzOcZ8uXFkqZG/Md1/ZFBc3cgxjGFJFHUfnJBA4KYHKNjGri2OVW1azsv5R34y8w4lFYvy24ApGWx5Holy7JjwppE5iik5btYpAhiZ9mHSCs7+GXAPvL771jLPoXxEBQ=
 before_install:
   - openssl aes-256-cbc -K $encrypted_8baa07224b9d_key -iv $encrypted_8baa07224b9d_iv
-    -in team-dagpenger.private-key.pem.enc -out travis/team-dagpenger.private-key.pem
+    -in travis/team-dagpenger.private-key.pem.enc -out travis/team-dagpenger.private-key.pem
     -d
   - git clone https://github.com/navikt/github-apps-support.git
     - export PATH=`pwd`/github-apps-support/bin:$PATH - export GH_TOKEN=$(generate-installation-token.sh
