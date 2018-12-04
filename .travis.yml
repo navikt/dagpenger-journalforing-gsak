@@ -6,14 +6,12 @@ env:
   - VERSION=$(git rev-parse --short HEAD)
   - GITHUB_APP_ID=21626
   - DOCKER_USERNAME=naviktdocker
-  - secure: DRjIjrWi55zc0mykrIVadUYVBR94M5ozsDj/FhnDp7uF4SmYH+naA1JiL1wzPEJWxHYcX2prQEEvOauKcZZxBttIlZ4egZP+6gazae6cAdVbvEph9ti/ZAJCm6XxDHPK/bZhNHvqU82yyAFRBXgoIVp4UxNg3BVCA7UJZ2MuiO9XindSzR1BPHMbf+ygDmT6lZv1APz0dWCBTl3l0x6aY5IqME010NOnAP5oHfbHusaYD1AIu35YZ6B0M19Mo3hvtsyG/ix8o+FRUSJO8BtDHgE32vzXQXdx5CnnmmgSGM/xPlyfhP1rWQbU/UXNTVUI/0tkHEvVKzmLGuvnRBkMFGqR1jc7819glkpFGtl23G0Aj2/XddXgZUc32yfBU1BtU9bftaQ+758GRY8iY6eDrPthyg1FQcL3ewl9E4wuOfeiSVv4k0babJAgmMrGxmGdpzJvn/DUlDwWqIUXkueHY8ZhKAf8mojmnCI6Y9hSHfspEd3B9k2qmJKmrUISF+jRVNH88AWMeR9jhh8ayRHMzaQO54/uAOYQGoy4Owps3doZcKxDEaFWBLrdRq52cy0IdRsuxr0zZECJWmblwcR5gE2DanfFP95OLOKR8n21QvRb0DDbv70a86MY40jRh5ITFh1YocE7wtHGPDbYtnIhY6MktuEBjA9icF1XU1hx3CA=
+  - secure: SspRZ8EaUnTNaeC9wooufNmJ0Iia14GiTHK1l+EFq6yzmvNL/QAdmgl/5/uYwjsc2CN2YJen+i4HhuSNogrpUC5OQZaXCP/CJOAZsEGbrUnEwvAiiNiov0rN5TC0yaghkvsVsUdCgAUGLR6XLsh+ucyyPwnxXUiCV7TKYYhzoqsZ3K1n7udaGp7kd2ghS1YL0Vw3a2b5921PKdf/qy9Z1WE35VQmCBckCB58tC9VJYXIGVM0jEWDC31XNCLMxoe1e7svSn1hLxVgC2hN19BV1QSm+5ntTmMygrLdZhdimEZsEZYb2o2AFo+XkI6YtY1L+O58eShTPmgOXeByOdJKGXVQGzU1ngptfwhl40LPuzw8IfYUPVyKGcxVB2D2ak2tBt9n3zQ8iKdBqtpxgwqBarcpwZThGzU9E8oHl9NxLaXgfPjKlp68TxhPhF0u3/f2oIkEGG/+HwBhsOSUQ2knLuzHIu8oCUSClmwFlYJ/nMzy1NVEOmQ0Vqqk8kO80jTIr9J2agbLryFmvgxJh+AD4uwBJuboJr8pDqe9u23bkwECTjPnUi0toYp3RBh8yBC2gRAHsboJJE/kyxyODt2rWzP8u4wGU7xAGtPxlAd/rXJ6VyECh6DdcRxwxNsC30SrQfxAQ2pIY2AQwvnBmFdDVKq6Vre57H5E19G5kfeBH58=
 before_install:
-- openssl aes-256-cbc -K $encrypted_8baa07224b9d_key -iv $encrypted_8baa07224b9d_iv
-  -in travis/team-dagpenger.private-key.pem.enc -out travis/team-dagpenger.private-key.pem -d
+  - openssl aes-256-cbc -K $encrypted_8baa07224b9d_key -iv $encrypted_8baa07224b9d_iv -in travis/team-dagpenger.private-key.pem.enc -out travis/team-dagpenger.private-key.pem -d
 - git clone https://github.com/navikt/github-apps-support.git
 - export PATH=`pwd`/github-apps-support/bin:$PATH
-- export GH_TOKEN=$(generate-installation-token.sh `generate-jwt.sh ./travis/team-dagpenger.private-key.pem
-  $GITHUB_APP_ID`)
+  - export GH_TOKEN=$(generate-installation-token.sh `generate-jwt.sh ./travis/team-dagpenger.private-key.pem $GITHUB_APP_ID`)
 stages:
 - Tests
 - Deploy
