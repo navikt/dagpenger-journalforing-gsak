@@ -5,13 +5,16 @@ env:
   global:
   - VERSION=$(git rev-parse --short HEAD)
   - GITHUB_APP_ID=21626
-  - DOCKER_USERNAME=naviktdocker
-  - secure: SspRZ8EaUnTNaeC9wooufNmJ0Iia14GiTHK1l+EFq6yzmvNL/QAdmgl/5/uYwjsc2CN2YJen+i4HhuSNogrpUC5OQZaXCP/CJOAZsEGbrUnEwvAiiNiov0rN5TC0yaghkvsVsUdCgAUGLR6XLsh+ucyyPwnxXUiCV7TKYYhzoqsZ3K1n7udaGp7kd2ghS1YL0Vw3a2b5921PKdf/qy9Z1WE35VQmCBckCB58tC9VJYXIGVM0jEWDC31XNCLMxoe1e7svSn1hLxVgC2hN19BV1QSm+5ntTmMygrLdZhdimEZsEZYb2o2AFo+XkI6YtY1L+O58eShTPmgOXeByOdJKGXVQGzU1ngptfwhl40LPuzw8IfYUPVyKGcxVB2D2ak2tBt9n3zQ8iKdBqtpxgwqBarcpwZThGzU9E8oHl9NxLaXgfPjKlp68TxhPhF0u3/f2oIkEGG/+HwBhsOSUQ2knLuzHIu8oCUSClmwFlYJ/nMzy1NVEOmQ0Vqqk8kO80jTIr9J2agbLryFmvgxJh+AD4uwBJuboJr8pDqe9u23bkwECTjPnUi0toYp3RBh8yBC2gRAHsboJJE/kyxyODt2rWzP8u4wGU7xAGtPxlAd/rXJ6VyECh6DdcRxwxNsC30SrQfxAQ2pIY2AQwvnBmFdDVKq6Vre57H5E19G5kfeBH58=
+  - secure: XOxieYQ16m5XWttIpU6q7VTi+GwkZVAbgUiCbGFSxWxDb9O9jJOfdYF/Z+HuPpD0Lzx8x5EZ16fKW2wgM75zvwKATGxIddxJdhC+chSog/jMhyFxKs20ErZoP0m2YKhOtm9adSoZAeEJcFBiNnIL2dB8gaLgTls2i4xpMd6UqhmstP+R3XyOIlS8kkm+TqcbDyQ0RJkoWXX9Gu0FLX6p1BKxPLI5TfgnAuVJW0dd4gSlxYns6rR0EX1/99CvL7Gq42kdgeeO2y8UgusEgeeZjBtKdRq7gwTmlLmif+LRGIOzBETzTRlwXtaiI+zzflBbTriYIUbAIYN/iFbVJgF71POISH+MXkFgQqa75Ozr3+QG6n6HT3l3RfICa9r6fsXOt1miOtq2BfNQgqHApPAOMjp4uitWqZeeeMxFwb5MLomnyTPgTC9c7Kr9DiegcHYZTTINQAi0XwbXBffJJCeOECu4YHjQ5E4KLlurVqhgZ/jFLupoeWfcUvwvpAlqvnVLqV1zRkGZY5nffstOXhkNJu090ikWOGztyijBBUD8N78dnweoOZ3MWLVJV9PVRkycVgaxbz9/tOGEuEk6zVuC6cuw+7AAplas5THXYcYKvE5MomnE6DF2e6Jrn3cjJ+Obckm3hgZeLzV6AGOfd4c2fxk37Zh19JCXSZmPDb8O9jo=
+  - secure: T+Q+qavugzs2VclUig6dc60dPCe1fTX7vZ2XQlrggXkYl/Hvq34//eVMxnVXF1ly470+6K6uEw9f/wkGv0zzw7oWafyRzM8BSvOdubABN8cJ2x0RJEHQEkByBdRE1Adl+tw0+SBXG+DJXmhLkfu7L2RIdOZkrQ4fAVGkz4SnjnEgIL8QW3IhNo3vUagwmxhqCiY95bmXzHj+baSlw59khoY+m9sMBpeQOzZTsqa6ov/3PQw7HvB8c8aLfFKTRpAuN2SwRBB3ZvQ8LNMQNOhSwvbu45H81vf8ZmuKyHZFMDwSk3VhPIxs/XsyonhD4g9o5CWIGtStBKHOQU82wwW+nC9ofnupf0wxALXhK39+ALJJCCnveoPQFy0t+cvaw+jUQlLpNNipWRMjykuNi0CAcWU3XhmFl7K8ALW15lcxZ4KQg5oMPTSRmelrHoP0Spq8bdUmsHrZ9bj+FFT0C2RW68GoF9L/g7+6XTJFPvwLiPTnF4QuUsBlLKfaTFUhIlpnjYdPPdLI14eX87E4uxbhOv4P/Sh2qm6hgadiK3iU9C7PzOcZ8uXFkqZG/Md1/ZFBc3cgxjGFJFHUfnJBA4KYHKNjGri2OVW1azsv5R34y8w4lFYvy24ApGWx5Holy7JjwppE5iik5btYpAhiZ9mHSCs7+GXAPvL771jLPoXxEBQ=
 before_install:
-  - openssl aes-256-cbc -K $encrypted_8baa07224b9d_key -iv $encrypted_8baa07224b9d_iv -in travis/team-dagpenger.private-key.pem.enc -out travis/team-dagpenger.private-key.pem -d
+  - openssl aes-256-cbc -K $encrypted_8baa07224b9d_key -iv $encrypted_8baa07224b9d_iv
+    -in team-dagpenger.private-key.pem.enc -out travis/team-dagpenger.private-key.pem
+    -d
 - git clone https://github.com/navikt/github-apps-support.git
 - export PATH=`pwd`/github-apps-support/bin:$PATH
-  - export GH_TOKEN=$(generate-installation-token.sh `generate-jwt.sh ./travis/team-dagpenger.private-key.pem $GITHUB_APP_ID`)
+  - export GH_TOKEN=$(generate-installation-token.sh `generate-jwt.sh ./travis/team-dagpenger.private-key.pem
+    $GITHUB_APP_ID`)
 stages:
 - Tests
 - Deploy
