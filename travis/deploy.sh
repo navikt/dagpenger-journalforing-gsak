@@ -23,3 +23,6 @@ then
 fi
 
 
+>&2 echo "Created depoyment against github deployment API, deployment id $DEPLOYMENT_ID"
+
+
