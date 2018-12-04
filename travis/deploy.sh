@@ -12,10 +12,10 @@ cat deploy.json
 
 DEPLOYMENT_RESPONSE=$(curl -X POST -H "Authorization: token $GH_TOKEN"  https://api.github.com/repos/navikt/dagpenger-journalforing-gsak/deployments --data @deploy.json)
 
-DEPLOYMENT_ID=$(echo DEPLOYMENT_RESPONSE | jq -r '.id')
+DEPLOYMENT_ID=$(echo ${DEPLOYMENT_RESPONSE} | jq -r '.id')
 
 
-if [ -z "DEPLOYMENT_ID" ];
+if [[ -z "$DEPLOYMENT_ID" ]];
 then
    >&2 echo "Unable to obtain deployment ID"
    >&2 echo "$DEPLOYMENT_RESPONSE"
