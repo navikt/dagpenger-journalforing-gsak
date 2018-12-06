@@ -17,7 +17,7 @@ echo ${DEPLOYMENT_RESPONSE}
 DEPLOYMENT_ID=$(echo ${DEPLOYMENT_RESPONSE} | jq -r '.id')
 
 
-if [[ -z "$DEPLOYMENT_ID" ]];
+if [ -z "$DEPLOYMENT_ID" ];
 then
    >&2 echo "Unable to obtain deployment ID"
    >&2 echo "$DEPLOYMENT_RESPONSE"
