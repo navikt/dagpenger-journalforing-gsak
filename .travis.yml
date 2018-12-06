@@ -13,8 +13,7 @@ before_install:
   -d
 - git clone https://github.com/navikt/github-apps-support.git
 - export PATH=`pwd`/github-apps-support/bin:$PATH
-- export GH_TOKEN=$(generate-installation-token.sh`generate-jwt.sh ./travis/team-dagpenger.private-key.pem
-  $GITHUB_APP_ID`)
+- export GH_TOKEN=$(generate-installation-token.sh `generate-jwt.sh ./travis/team-dagpenger.private-key.pem $GITHUB_APP_ID`)
 stages:
 - Tests
 - Deploy
