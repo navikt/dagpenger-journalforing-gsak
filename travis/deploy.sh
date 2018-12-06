@@ -12,6 +12,8 @@ cat deploy.json
 
 DEPLOYMENT_RESPONSE=$(curl -X POST -H "Authorization: token $GH_TOKEN"  https://api.github.com/repos/navikt/dagpenger-journalforing-gsak/deployments --data @deploy.json)
 
+echo ${DEPLOYMENT_RESPONSE}
+
 DEPLOYMENT_ID=$(echo ${DEPLOYMENT_RESPONSE} | jq -r '.id')
 
 
