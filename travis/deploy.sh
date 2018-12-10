@@ -3,7 +3,10 @@ set -e
 
 echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
 
-./gradlew dockerPush${VERSION} -x check
+IMG=$DOCKER_IMG_NAME:$VERSION
+LATEST=$$DOCKER_IMG_NAME:latest
+
+docker build . -t $IMG -t $LATEST
 
 jq -n --arg ref $VERSION '{ "ref": $ref, "description": "Deploy from travis", "required_contexts": []  }' >> deploy.json
 
