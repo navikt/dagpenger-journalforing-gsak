@@ -4,7 +4,7 @@ set -e
 echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
 
 IMG=$DOCKER_IMG_NAME:$VERSION
-LATEST=$$DOCKER_IMG_NAME:latest
+LATEST=$DOCKER_IMG_NAME:latest
 
 docker build . -t $IMG -t $LATEST
 
