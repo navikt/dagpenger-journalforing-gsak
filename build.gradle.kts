@@ -1,18 +1,19 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     id("application")
-    kotlin("jvm") version "1.3.10"
+    kotlin("jvm") version "1.3.11"
     id("com.diffplug.gradle.spotless") version "3.13.0"
-    id("com.palantir.docker") version "0.20.1"
-    id("com.palantir.git-version") version "0.11.0"
     id("java-library")
     id("info.solidsoft.pitest") version "1.3.0"
+    id("com.github.johnrengelman.shadow") version "4.0.3"
 }
 
 apply {
     plugin("com.diffplug.gradle.spotless")
+    plugin("com.github.johnrengelman.shadow")
 }
 
 repositories {
@@ -25,26 +26,10 @@ repositories {
     maven("https://dl.bintray.com/kittinunf/maven")
 }
 
-val gitVersion: groovy.lang.Closure<Any> by extra
-version = gitVersion()
-group = "no.nav.dagpenger"
 
 application {
     applicationName = "dagpenger-journalforing-gsak"
     mainClassName = "no.nav.dagpenger.journalføring.gsak.JournalføringGsak"
-}
-
-docker {
-    name = "naviktdocker/${application.applicationName}"
-    buildArgs(
-        mapOf(
-            "APP_NAME" to application.applicationName,
-            "DIST_TAR" to "${application.applicationName}-${project.version}"
-        )
-    )
-    files(tasks.findByName("distTar")?.outputs)
-    pull(true)
-    tags(project.version.toString())
 }
 
 val kotlinLoggingVersion = "1.4.9"
@@ -103,7 +88,7 @@ pitest {
     timestampedReports = false
 }
 
-//tasks.getByName("check").finalizedBy("pitest")
+tasks.getByName("check").finalizedBy("pitest")
 
 tasks.withType<Test> {
     testLogging {

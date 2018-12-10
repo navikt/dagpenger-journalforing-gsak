@@ -5,6 +5,7 @@ env:
   global:
   - VERSION=$(git rev-parse --short HEAD)
   - GITHUB_APP_ID=21626
+  - DOCKER_IMG_NAME=naviktdocker/dagpenger-journalforing-gsak
   - DOCKER_USERNAME=naviktdocker
   - secure: ARkjBhFwqDqAp48vWMzDTGhTStMS8EUxbgV6tIduwrS0Iy1sgHemFD2sooJwRHdagi6dKmPzZTP2+5Rvyy2FqjS6l1kCF+aXKfOEZDFGC5PZPDGs5kasl7yEy77Wdndc9K5Oby/Pkd7VsuiIGr/MR4orAdEgSNO3HMz7lpXDMFcNb7OI+PTYvclGQI9X+xdFZP7Qr6WAuJJRtRlRA9tSN87GE89r+U7F7N1sEnbFCH4d62H0cGt6XET7caest79tzqZ8iNS2Is62nRNOfyb5Iic2wNFLKoMq4gz6iIJmqKu9F6RpSPl90XSeV+Krfo/5Ord+1BiT9MezFLC2GYznpSQfpDo7nHJ5fTxx//h89WygPRP9W5vIT5Rnt2kV4X6oiXXHIt9Mr4HaNwEfO6yA458T7PwJvnz+Rv0COuxyMNP1ts+swjYiI7ouU+h5CPEL6L6R0zXtfCvy0+dMoz2T+7l70PCbVqQGfs/XKFGaMWpOX9FvcutaXCgflEhstYe+mk3D1jU9yrWkYGS/40GB5GLbifUnDs5fQbGrc/QlW/yqEaexrDcyw1F2Ax0wu28qrCwc4MQ9RcPPKhIWPFs8J8+wnNOK6IEGgx3PPAQp11v3xXzOnBz6L+b8qPag2jtNplGc5iVZk6Hd816mEe9DfQp6CmwNNFzwOxDPYnxvACk=
 before_install:
@@ -23,7 +24,7 @@ jobs:
     script: "./gradlew check --stacktrace"
   - stage: Deploy
     if: branch = master
-    script: skip
+    script: ./gradlew shadowJar
     deploy:
       provider: script
       script: travis/deploy.sh
