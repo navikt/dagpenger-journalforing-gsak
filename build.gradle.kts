@@ -85,6 +85,7 @@ pitest {
     pitestVersion = "1.4.3"
     avoidCallsTo = setOf("kotlin.jvm.internal")
     timestampedReports = false
+    targetClasses = setOf("no.nav.dagpenger.*")
 }
 
 //tasks.getByName("check").finalizedBy("pitest")
