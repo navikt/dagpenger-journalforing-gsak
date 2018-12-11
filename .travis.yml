@@ -24,7 +24,7 @@ jobs:
     script: "./gradlew check --stacktrace"
   - stage: Deploy
     if: branch = master
-    script: ./gradlew shadowJar -x check
+    script: "./gradlew clean shadowJar -x check"
     deploy:
       provider: script
       script: travis/deploy.sh

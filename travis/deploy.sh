@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
+ls -al build/libs
+
+
 echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
 
 IMAGE_VERSION=$DOCKER_IMG_NAME:$VERSION
