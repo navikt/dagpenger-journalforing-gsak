@@ -14,9 +14,7 @@ fi
 export PATH=`pwd`/github-apps-support/bin:$PATH
 
 
-kubectl config current-context
-kubectl config use-context preprod-fss
-kubectl apply -f nais.yaml
+kubectl version
 
 
 
