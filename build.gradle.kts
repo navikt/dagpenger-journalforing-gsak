@@ -31,6 +31,11 @@ application {
     mainClassName = "no.nav.dagpenger.journalføring.gsak.JournalføringGsak"
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
 val kotlinLoggingVersion = "1.4.9"
 val kafkaVersion = "2.0.0"
 val confluentVersion = "4.1.2"
@@ -88,7 +93,7 @@ pitest {
     targetClasses = setOf("no.nav.dagpenger.*")
 }
 
-//tasks.getByName("check").finalizedBy("pitest")
+// tasks.getByName("check").finalizedBy("pitest")
 
 tasks.withType<Test> {
     testLogging {

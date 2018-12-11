@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
 set -e
 
-ls -al build/libs
-
+ls -al
 
 echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
 
 IMAGE_VERSION=$DOCKER_IMG_NAME:$VERSION
 IMAGE_LATEST=$DOCKER_IMG_NAME:latest
 
-docker build . -t $IMAGE_VERSION -t $IMAGE_LATEST
+docker build . --pull -t $IMAGE_VERSION -t $IMAGE_LATEST
 
 docker push $DOCKER_IMG_NAME
 
