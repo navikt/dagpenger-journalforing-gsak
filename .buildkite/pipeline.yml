@@ -2,4 +2,4 @@ steps:
   - label: 'Example Test'
     command: echo "Hello!"
   - label: ':house_with_garden: Setting up the environment'
-    command: 'access_token.sh'
+    command: './access_token.sh'
