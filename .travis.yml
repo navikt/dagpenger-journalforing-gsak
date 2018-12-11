@@ -26,6 +26,7 @@ jobs:
     if: branch = master
     script: "./gradlew clean shadowJar -x check"
     deploy:
+      skip_cleanup: true
       provider: script
       script: travis/deploy.sh
 before_cache:
