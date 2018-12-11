@@ -28,6 +28,6 @@ spec:
   secrets: true
   env:
     - name: DAGPENGER_OPPSLAG_API_URL
-      value: http://dagpenger-oppslag
+      value: http://dagpenger-oppslag/
     - name: OIDC_STS_ISSUERURL
-      value: https://security-token-service-q1.nais.preprod.local # http://security-token-service
+      value: https://security-token-service/ # http://security-token-service
