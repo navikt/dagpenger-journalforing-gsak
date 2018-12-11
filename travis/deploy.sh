@@ -3,10 +3,12 @@ set -e
 
 echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
 
-IMG=$DOCKER_IMG_NAME:$VERSION
-LATEST=$DOCKER_IMG_NAME:latest
+IMAGE_VERSION=$DOCKER_IMG_NAME:$VERSION
+IMAGE_LATEST=$DOCKER_IMG_NAME:latest
 
-docker build . -t $IMG -t $LATEST
+docker build . -t $IMAGE_VERSION -t $IMAGE_LATEST
+
+docker push $DOCKER_IMG_NAME
 
 jq -n --arg ref $VERSION '{ "ref": $ref, "description": "Deploy from travis", "required_contexts": []  }' >> deploy.json
 
