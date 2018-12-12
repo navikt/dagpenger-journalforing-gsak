@@ -13,7 +13,6 @@ plugins {
 
 apply {
     plugin("com.diffplug.gradle.spotless")
-    plugin("com.github.johnrengelman.shadow")
 }
 
 repositories {
