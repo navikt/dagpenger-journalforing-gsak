@@ -10,7 +10,7 @@ docker build . --pull -t $IMAGE_VERSION -t $IMAGE_LATEST
 
 docker push $DOCKER_IMG_NAME
 
-jq -n --arg ref $VERSION '{ "ref": $ref, "description": "Deploy from travis", "required_contexts": []  }' >> deploy.json
+jq -n --arg ref $VERSION '{ "ref": $ref, "description": "Deploy from travis", "required_contexts": [], "payload": "{\"freestyle\": \"payload\"}"  }' >> deploy.json
 
 echo "DEPLOYING TO GITHUB"
 cat deploy.json
