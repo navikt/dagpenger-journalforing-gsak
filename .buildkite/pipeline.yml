@@ -1,7 +1,5 @@
 steps:
   - label: 'Example Test'
     command: echo "Hello!"
-  - label: "Check out environment"
-    command: env
   - label: ':house_with_garden: Setting up the environment'
     command: './buildkite_test.sh'
