@@ -1,4 +1,4 @@
-# Example https://github.com/nais/naiserator/blob/master/examples/app.yaml
+# Example https://github.com/nais/naiserator/blob/master/examples/nais-max.yaml
 apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
@@ -8,6 +8,7 @@ metadata:
 spec:
   image: naviktdocker/dagpenger-journalforing-gsak:latest
   port: 8080
+  team: teamdagpenger
   liveness:
     path: isAlive
   readiness:
