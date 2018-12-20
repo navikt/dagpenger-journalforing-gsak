@@ -6,7 +6,6 @@ import no.nav.common.JAASCredential
 import no.nav.common.KafkaEnvironment
 import no.nav.common.embeddedutils.getAvailablePort
 import no.nav.dagpenger.events.avro.Behov
-import no.nav.dagpenger.events.avro.HenvendelsesType
 import no.nav.dagpenger.events.avro.Journalpost
 import no.nav.dagpenger.events.avro.Mottaker
 import no.nav.dagpenger.events.avro.Søknad
@@ -124,18 +123,17 @@ class JournalføringGsakComponentTest {
         val behovId = "1"
         innkommendeBehov.forEach { testdata ->
             val innkommendeBehov: Behov = Behov
-                    .newBuilder()
-                    .setBehovId(behovId)
-                    .setMottaker(Mottaker("12345678912"))
-                    .setBehandleneEnhet("0000")
-                    .setHenvendelsesType(
-                            HenvendelsesType.newBuilder().setSøknad(
-                                    Søknad.newBuilder().setVedtakstype(Vedtakstype.NY_RETTIGHET).build()
-                            ).build())
-                    .setFagsakId(if (testdata[0]) "fagsak" else null)
-                    .setGsaksakId(if (testdata[1]) "gsaksak" else null)
-                    .setJournalpost(
-                            Journalpost
+                .newBuilder()
+                .setBehovId(behovId)
+                .setMottaker(Mottaker("12345678912"))
+                .setBehandleneEnhet("0000")
+                .setHenvendelsesType(
+                    Søknad.newBuilder().setVedtakstype(Vedtakstype.NY_RETTIGHET).build()
+                )
+                .setFagsakId(if (testdata[0]) "fagsak" else null)
+                .setGsaksakId(if (testdata[1]) "gsaksak" else null)
+                .setJournalpost(
+                    Journalpost
                         .newBuilder()
                         .setJournalpostId("12345")
                         .build()
@@ -147,8 +145,8 @@ class JournalføringGsakComponentTest {
 
         val behovConsumer: KafkaConsumer<String, Behov> = behovConsumer(env, "test-consumer-1")
         val behovsListe = behovConsumer.poll(Duration.ofSeconds(5))
-                .filter { record -> record.value().getBehovId() == behovId }
-                .toList()
+            .filter { record -> record.value().getBehovId() == behovId }
+            .toList()
 
         //Verify the number of produced messages
         assertEquals(innkommendeBehov.size + behovsToProcess, behovsListe.size)
@@ -165,12 +163,12 @@ class JournalføringGsakComponentTest {
 
         //Test data: Vedtakstype
         val innkommendeBehov = listOf(
-                Vedtakstype.NY_RETTIGHET,
-                Vedtakstype.NY_RETTIGHET,
-                Vedtakstype.GJENOPPTAK,
-                Vedtakstype.GJENOPPTAK,
-                Vedtakstype.NY_RETTIGHET,
-                Vedtakstype.GJENOPPTAK
+            Vedtakstype.NY_RETTIGHET,
+            Vedtakstype.NY_RETTIGHET,
+            Vedtakstype.GJENOPPTAK,
+            Vedtakstype.GJENOPPTAK,
+            Vedtakstype.NY_RETTIGHET,
+            Vedtakstype.GJENOPPTAK
         )
 
         val behovsToProcess = innkommendeBehov.size
@@ -178,30 +176,29 @@ class JournalføringGsakComponentTest {
         val behovId = "2"
         innkommendeBehov.forEach { testdata ->
             val innkommendeBehov: Behov = Behov
-                    .newBuilder()
-                    .setBehovId(behovId)
-                    .setMottaker(Mottaker("12345678912"))
-                    .setBehandleneEnhet("0000")
-                    .setHenvendelsesType(
-                            HenvendelsesType.newBuilder().setSøknad(
-                                    Søknad.newBuilder().setVedtakstype(testdata).build()
-                            ).build())
-                    .setFagsakId("fagsak")
-                    .setJournalpost(
-                            Journalpost
-                                    .newBuilder()
-                                    .setJournalpostId("12345")
-                                    .build()
-                    )
-                    .build()
+                .newBuilder()
+                .setBehovId(behovId)
+                .setMottaker(Mottaker("12345678912"))
+                .setBehandleneEnhet("0000")
+                .setHenvendelsesType(
+                    Søknad.newBuilder().setVedtakstype(testdata).build()
+                )
+                .setFagsakId("fagsak")
+                .setJournalpost(
+                    Journalpost
+                        .newBuilder()
+                        .setJournalpostId("12345")
+                        .build()
+                )
+                .build()
             val record = behovProducer.send(ProducerRecord(INNGÅENDE_JOURNALPOST.name, innkommendeBehov)).get()
             LOGGER.info { "Produced -> ${record.topic()}  to offset ${record.offset()}" }
         }
 
         val behovConsumer: KafkaConsumer<String, Behov> = behovConsumer(env, "test-consumer-2")
         val behovsListe = behovConsumer.poll(Duration.ofSeconds(5))
-                .filter { record -> record.value().getBehovId() == behovId }
-                .toList()
+            .filter { record -> record.value().getBehovId() == behovId }
+            .toList()
 
         //Verify the number of produced messages
         assertEquals(innkommendeBehov.size + behovsToProcess, behovsListe.size)
