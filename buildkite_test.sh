@@ -15,5 +15,3 @@ export PATH=`pwd`/github-apps-support/bin:$PATH
 
 
 echo $BUILDKITE_GITHUB_DEPLOYMENT_ID
-
-printenv
