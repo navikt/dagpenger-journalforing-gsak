@@ -39,7 +39,7 @@ val kotlinLoggingVersion = "1.4.9"
 val kafkaVersion = "2.0.0"
 val confluentVersion = "4.1.2"
 val ktorVersion = "1.0.0"
-val prometheusVersion = "0.5.0"
+val prometheusVersion = "0.6.0"
 val fuelVersion = "1.15.0"
 val log4j2Version = "2.11.1"
 
