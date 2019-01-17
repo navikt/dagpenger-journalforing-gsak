@@ -6,7 +6,7 @@ metadata:
   labels:
     team: teamdagpenger
 spec:
-  image: naviktdocker/dagpenger-journalforing-gsak:latest
+  image: repo.adeo.no:5443/dagpenger-journalforing-gsak:latest
   port: 8080
   team: teamdagpenger
   liveness:
