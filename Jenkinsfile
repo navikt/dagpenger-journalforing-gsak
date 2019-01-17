@@ -75,7 +75,7 @@ pipeline {
 
       steps {
         script {
-          sh "kubectl config use-context preprod-${env.ZONE}"
+          sh "kubectl config use-context dev-${env.ZONE}"
           sh "kubectl apply -n ${env.NAMESPACE} -f nais.yaml"
           sh "kubectl rollout status -w deployment/${APPLICATION_NAME}"
         }
