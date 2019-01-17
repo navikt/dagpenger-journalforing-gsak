@@ -21,10 +21,10 @@ stages:
 jobs:
   include:
   - stage: Tests
-    script: "./gradlew check --stacktrace"
+    script: "./gradlew check"
   - stage: Deploy
     if: branch = master
-    script: "./gradlew clean shadowJar -x check"
+    script: "./gradlew clean build -x check"
     deploy:
       skip_cleanup: true
       provider: script
