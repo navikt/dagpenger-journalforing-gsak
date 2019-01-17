@@ -36,11 +36,9 @@ pipeline {
     }
 
     stage('Publish') {
-      steps {
-        timeout(10) {
-                input 'Keep going?'
-        }
+      when { branch 'master' }
 
+      steps {
         withCredentials([usernamePassword(
           credentialsId: 'repo.adeo.no',
           usernameVariable: 'REPO_USERNAME',
@@ -56,6 +54,8 @@ pipeline {
     }
 
     stage("Publish service contract") {
+      when { branch 'master' }
+
       steps {
         withCredentials([usernamePassword(
           credentialsId: 'repo.adeo.no',
@@ -68,6 +68,8 @@ pipeline {
     }
 
     stage('Deploy to non-production') {
+      when { branch 'master' }
+
       steps {
         script {
           sh "kubectl config use-context preprod-${env.ZONE}"
