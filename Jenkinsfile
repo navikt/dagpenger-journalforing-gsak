@@ -72,9 +72,7 @@ pipeline {
 
           post {
             success {
-              archiveArtifacts: [
-                artifacts: 'nais.yaml',
-              ]
+              archiveArtifacts: artifacts: 'nais.yaml', fingerprint: true
             }
           }
         }
