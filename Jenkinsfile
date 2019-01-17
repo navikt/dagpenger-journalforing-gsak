@@ -37,44 +37,46 @@ pipeline {
       }
     }
 
-    stages('Deploy') {
+    stage('Deploy') {
       when { branch 'master' }
 
-      stage('Publish') {
-        steps {
-          withCredentials([usernamePassword(
-            credentialsId: 'repo.adeo.no',
-            usernameVariable: 'REPO_USERNAME',
-            passwordVariable: 'REPO_PASSWORD'
-          )]) {
-              sh "docker login -u ${REPO_USERNAME} -p ${REPO_PASSWORD} repo.adeo.no:5443"
-          }
+      stages {
+        stage('Publish') {
+          steps {
+            withCredentials([usernamePassword(
+              credentialsId: 'repo.adeo.no',
+              usernameVariable: 'REPO_USERNAME',
+              passwordVariable: 'REPO_PASSWORD'
+            )]) {
+                sh "docker login -u ${REPO_USERNAME} -p ${REPO_PASSWORD} repo.adeo.no:5443"
+            }
 
-          script {
-            sh "docker build . --pull -t ${DOCKER_IMAGE_VERSION}"
-            sh "docker push ${DOCKER_IMAGE_VERSION}"
-          }
-        }
-      }
-
-      stage("Publish service contract") {
-        steps {
-          withCredentials([usernamePassword(
-            credentialsId: 'repo.adeo.no',
-            usernameVariable: 'REPO_USERNAME',
-            passwordVariable: 'REPO_PASSWORD'
-          )]) {
-            sh "curl -vvv --user ${REPO_USERNAME}:${REPO_PASSWORD} --upload-file nais.yaml https://repo.adeo.no/repository/raw/nais/${APPLICATION_NAME}/${VERSION}/nais.yaml"
+            script {
+              sh "docker build . --pull -t ${DOCKER_IMAGE_VERSION}"
+              sh "docker push ${DOCKER_IMAGE_VERSION}"
+            }
           }
         }
-      }
 
-      stage('Deploy to non-production') {
-        steps {
-          script {
-            sh "kubectl config use-context dev-${env.ZONE}"
-            sh "kubectl apply -n ${env.NAMESPACE} -f nais.yaml"
-            sh "kubectl rollout status -w deployment/${APPLICATION_NAME}"
+        stage("Publish service contract") {
+          steps {
+            withCredentials([usernamePassword(
+              credentialsId: 'repo.adeo.no',
+              usernameVariable: 'REPO_USERNAME',
+              passwordVariable: 'REPO_PASSWORD'
+            )]) {
+              sh "curl -vvv --user ${REPO_USERNAME}:${REPO_PASSWORD} --upload-file nais.yaml https://repo.adeo.no/repository/raw/nais/${APPLICATION_NAME}/${VERSION}/nais.yaml"
+            }
+          }
+        }
+
+        stage('Deploy to non-production') {
+          steps {
+            script {
+              sh "kubectl config use-context dev-${env.ZONE}"
+              sh "kubectl apply -n ${env.NAMESPACE} -f nais.yaml"
+              sh "kubectl rollout status -w deployment/${APPLICATION_NAME}"
+            }
           }
         }
       }
