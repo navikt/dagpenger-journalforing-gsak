@@ -81,7 +81,7 @@ pipeline {
           steps {
             script {
               sh "kubectl config use-context dev-${env.ZONE}"
-              sh "kubectl apply -n ${env.NAMESPACE} -f nais.yaml"
+              sh "kubectl apply -n ${env.NAMESPACE} -f nais.yaml --wait"
               sh "kubectl rollout status -w deployment/${APPLICATION_NAME}"
             }
           }
