@@ -31,7 +31,8 @@ class JournalføringGsak(val env: Environment, val gsakClient: GsakClient) : Ser
         fun main(args: Array<String>) {
             val env = Environment()
             val service = JournalføringGsak(
-                    env, GsakHttpClient(env.gsakSakUrl, StsOidcClient(env.oicdStsUrl, env.username, env.password)))
+                env, GsakHttpClient(env.gsakSakUrl, StsOidcClient(env.oicdStsUrl, env.username, env.password))
+            )
             service.start()
         }
     }
@@ -54,8 +55,8 @@ class JournalføringGsak(val env: Environment, val gsakClient: GsakClient) : Ser
         hasExistingGsakSak.mapValues(this::findSak)
 
         needsNewGsakSak.merge(hasExistingGsakSak)
-                .peek { key, value -> LOGGER.info("Producing ${value.javaClass} with key $key") }
-                .toTopic(INNGÅENDE_JOURNALPOST, env.schemaRegistryUrl)
+            .peek { key, value -> LOGGER.info("Producing ${value.javaClass} with key $key") }
+            .toTopic(INNGÅENDE_JOURNALPOST, env.schemaRegistryUrl)
 
         return KafkaStreams(builder.build(), this.getConfig())
     }
@@ -70,9 +71,10 @@ class JournalføringGsak(val env: Environment, val gsakClient: GsakClient) : Ser
 
     private fun createSak(behov: Behov): Behov {
         val sak = gsakClient.createSak(
-                behov.getMottaker().getIdentifikator(),
-                behov.getFagsakId(),
-                behov.getBehovId())
+            behov.getMottaker().getIdentifikator(),
+            behov.getFagsakId(),
+            behov.getBehovId()
+        )
 
         behov.setGsaksakId(sak.id.toString())
         return behov
@@ -80,8 +82,9 @@ class JournalføringGsak(val env: Environment, val gsakClient: GsakClient) : Ser
 
     private fun findSak(behov: Behov): Behov {
         val saker = gsakClient.findSak(
-                behov.getMottaker().getIdentifikator(),
-                behov.getBehovId())
+            behov.getMottaker().getIdentifikator(),
+            behov.getBehovId()
+        )
 
         //TODO: Find correct sak
         behov.setGsaksakId(saker[0].id.toString())
@@ -90,4 +93,4 @@ class JournalføringGsak(val env: Environment, val gsakClient: GsakClient) : Ser
 }
 
 fun shouldBeProcessed(behov: Behov): Boolean =
-        !behov.getTrengerManuellBehandling() && behov.hasFagsakId() && !behov.hasGsakId()
+    !behov.getTrengerManuellBehandling() && behov.hasFagsakId() && !behov.hasGsakId()
