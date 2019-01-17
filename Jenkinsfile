@@ -66,6 +66,8 @@ pipeline {
               passwordVariable: 'REPO_PASSWORD'
             )]) {
               sh "sed -i 's/latest/${VERSION}/' nais.yaml"
+              sh "sed -i 's/naviktdocker/${DOCKER_REPO}/' nais.yaml"
+              sh "cat nais.yaml"
               sh "curl -vvv --user ${REPO_USERNAME}:${REPO_PASSWORD} --upload-file nais.yaml https://repo.adeo.no/repository/raw/nais/${APPLICATION_NAME}/${VERSION}/nais.yaml"
             }
           }
