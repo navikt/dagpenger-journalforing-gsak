@@ -3,6 +3,7 @@ apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   name: dagpenger-journalforing-gsak
+  namespace: default
   labels:
     team: teamdagpenger
 spec:

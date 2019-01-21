@@ -1,12 +1,11 @@
 pipeline {
   agent any
   environment {
-    APPLICATION_NAME = 'dagpenger-journalforing-gsak'
+    DEPLOYMENT = readYaml(file: './nais.yaml')
+    APPLICATION_NAME = "${DEPLOYMENT.metadata.name}"
     ZONE = 'fss'
-    NAMESPACE = 'default'
+    NAMESPACE = "${DEPLOYMENT.metadata.namespace}"
     VERSION = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
-    DOCKER_REPO = 'repo.adeo.no:5443/'
-    DOCKER_IMAGE_VERSION = '${DOCKER_REPO}${APPLICATION_NAME}:${VERSION}'
   }
 
   stages {
@@ -40,13 +39,18 @@ pipeline {
     stage('Publish') {
       when { branch 'master' }
 
+      environment {
+        DOCKER_REPO = 'repo.adeo.no:5443/'
+        DOCKER_IMAGE_VERSION = '${DOCKER_REPO}${APPLICATION_NAME}:${VERSION}'
+      }
+
       steps {
         withCredentials([usernamePassword(
           credentialsId: 'repo.adeo.no',
           usernameVariable: 'REPO_USERNAME',
           passwordVariable: 'REPO_PASSWORD'
         )]) {
-          sh "docker login -u ${REPO_USERNAME} -p ${REPO_PASSWORD} repo.adeo.no:5443"
+          sh "docker login -u ${REPO_USERNAME} -p ${REPO_PASSWORD} ${DOCKER_REPO}"
         }
 
         script {
