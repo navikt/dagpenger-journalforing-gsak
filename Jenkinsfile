@@ -3,7 +3,7 @@ pipeline {
   environment {
     DEPLOYMENT = readYaml(file: './nais.yaml')
     APPLICATION_NAME = "${DEPLOYMENT.metadata.name}"
-    ZONE = 'fss'
+    ZONE = "${DEPLOYMENT.metadata.annotations.zone}"
     NAMESPACE = "${DEPLOYMENT.metadata.namespace}"
     VERSION = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
   }
@@ -67,9 +67,10 @@ pipeline {
           usernameVariable: 'REPO_USERNAME',
           passwordVariable: 'REPO_PASSWORD'
         )]) {
-          sh "sed -i 's/latest/${VERSION}/' nais.yaml"
-          sh "cat nais.yaml"
-          sh "curl --user ${REPO_USERNAME}:${REPO_PASSWORD} --upload-file nais.yaml https://repo.adeo.no/repository/raw/nais/${APPLICATION_NAME}/${VERSION}/nais.yaml"
+          sh label: 'Replace latest with git sha1',
+            script "sed 's/latest/${VERSION}/' nais.yaml | tee nais.yaml"
+          sh label: 'Upload nais.yaml to repository',
+            script "curl --user ${REPO_USERNAME}:${REPO_PASSWORD} --upload-file nais.yaml https://repo.adeo.no/repository/raw/nais/${APPLICATION_NAME}/${VERSION}/nais.yaml"
         }
       }
 
