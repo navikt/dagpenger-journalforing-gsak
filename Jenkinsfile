@@ -36,7 +36,7 @@ pipeline {
       }
     }
 
-    stage('Publish') {
+    stage('Deploy') {
       when { branch 'master' }
 
       environment {
@@ -45,18 +45,16 @@ pipeline {
       }
 
       steps {
+        // Build and push Docker image
         withDockerRegistry(
           credentialsId: 'repo.adeo.no',
           url: "https://${DOCKER_REPO}"
         ) {
           sh label: 'Build Docker Image', script: "docker build . --pull -t ${DOCKER_IMAGE_VERSION}"
-          sh label: 'Push Docker Image', script: "docker push ${DOCKER_IMAGE_VERSION}"
+          sh label: 'Push Docker Image', script: "docker push ${DOCKER_IMAGE_VERSION}; :"
         }
-      }
-    }
 
-    stage("Publish service contract") {
-      steps {
+        // Publish service contract
         withCredentials([usernamePassword(
           credentialsId: 'repo.adeo.no',
           usernameVariable: 'REPO_USERNAME',
@@ -67,21 +65,18 @@ pipeline {
           sh label: 'Upload nais.yaml to repository',
             script: "curl --user ${REPO_USERNAME}:${REPO_PASSWORD} --upload-file nais.yaml https://repo.adeo.no/repository/raw/nais/${APPLICATION_NAME}/${VERSION}/nais.yaml"
         }
+
+        // Deploy to non-production
+        script {
+          sh label: 'Change context for kubectl', script: "kubectl config use-context dev-${env.ZONE}"
+          sh label: 'Apply new deployment', script: "kubectl apply -n ${env.NAMESPACE} -f nais.yaml --wait"
+          sh label: 'Wait for deployment to complete', script: "kubectl rollout status -w deployment/${APPLICATION_NAME}"
+        }
       }
 
       post {
         success {
           archiveArtifacts artifacts: 'nais.yaml', fingerprint: true
-        }
-      }
-    }
-
-    stage('Deploy to non-production') {
-      steps {
-        script {
-          sh label: 'Change context for kubectl', script: "kubectl config use-context dev-${env.ZONE}"
-          sh label: 'Apply new deployment', script: "kubectl apply -n ${env.NAMESPACE} -f nais.yaml --wait"
-          sh label: 'Wait for deployment to complete', script: "kubectl rollout status -w deployment/${APPLICATION_NAME}"
         }
       }
     }
