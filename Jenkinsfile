@@ -45,32 +45,33 @@ pipeline {
       }
 
       steps {
-        // Build and push Docker image
         withDockerRegistry(
           credentialsId: 'repo.adeo.no',
           url: "https://${DOCKER_REPO}"
         ) {
-          sh label: 'Build Docker Image', script: "docker build . --pull -t ${DOCKER_IMAGE_VERSION}"
-          sh label: 'Push Docker Image', script: "docker push ${DOCKER_IMAGE_VERSION}; :"
+          sh label: 'Build and push Docker image', script: """
+            docker build . --pull -t ${DOCKER_IMAGE_VERSION}"
+            docker push ${DOCKER_IMAGE_VERSION}
+          """
         }
 
-        // Publish service contract
         withCredentials([usernamePassword(
           credentialsId: 'repo.adeo.no',
           usernameVariable: 'REPO_USERNAME',
           passwordVariable: 'REPO_PASSWORD'
         )]) {
-          sh label: 'Replace latest with git sha1',
-            script: "sed 's/latest/${VERSION}/' nais.yaml | tee nais.yaml"
-          sh label: 'Upload nais.yaml to repository',
-            script: "curl --user ${REPO_USERNAME}:${REPO_PASSWORD} --upload-file nais.yaml https://repo.adeo.no/repository/raw/nais/${APPLICATION_NAME}/${VERSION}/nais.yaml"
+          sh label: 'Publish service contract', script: """
+            sed 's/latest/${VERSION}/' nais.yaml | tee nais.yaml
+            curl --user ${REPO_USERNAME}:${REPO_PASSWORD} --upload-file nais.yaml https://repo.adeo.no/repository/raw/nais/${APPLICATION_NAME}/${VERSION}/nais.yaml
+          """
         }
 
-        // Deploy to non-production
         script {
-          sh label: 'Change context for kubectl', script: "kubectl config use-context dev-${env.ZONE}"
-          sh label: 'Apply new deployment', script: "kubectl apply -n ${env.NAMESPACE} -f nais.yaml --wait"
-          sh label: 'Wait for deployment to complete', script: "kubectl rollout status -w deployment/${APPLICATION_NAME}"
+          sh label: 'Deploy to non-production', script: """
+            kubectl config use-context dev-${env.ZONE}
+            kubectl apply -n ${env.NAMESPACE} -f nais.yaml --wait
+            kubectl rollout status -w deployment/${APPLICATION_NAME}
+          """
         }
       }
 
