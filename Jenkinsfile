@@ -50,7 +50,7 @@ pipeline {
           url: "https://${DOCKER_REPO}"
         ) {
           sh label: 'Build and push Docker image', script: """
-            docker build . --pull -t ${DOCKER_IMAGE_VERSION}"
+            docker build . --pull -t ${DOCKER_IMAGE_VERSION}
             docker push ${DOCKER_IMAGE_VERSION}
           """
         }
@@ -66,13 +66,11 @@ pipeline {
           """
         }
 
-        script {
-          sh label: 'Deploy to non-production', script: """
-            kubectl config use-context dev-${env.ZONE}
-            kubectl apply -n ${env.NAMESPACE} -f nais.yaml --wait
-            kubectl rollout status -w deployment/${APPLICATION_NAME}
-          """
-        }
+        sh label: 'Deploy to non-production', script: """
+          kubectl config use-context dev-${env.ZONE}
+          kubectl apply -n ${env.NAMESPACE} -f nais.yaml --wait
+          kubectl rollout status -w deployment/${APPLICATION_NAME}
+        """
       }
 
       post {
