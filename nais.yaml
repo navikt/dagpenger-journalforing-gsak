@@ -3,8 +3,11 @@ apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   name: dagpenger-journalforing-gsak
+  namespace: default
   labels:
     team: teamdagpenger
+  annotations:
+    zone: fss
 spec:
   image: repo.adeo.no:5443/dagpenger-journalforing-gsak:latest
   port: 8080
