@@ -55,16 +55,9 @@ pipeline {
           """
         }
 
-        withCredentials([usernamePassword(
-          credentialsId: 'repo.adeo.no',
-          usernameVariable: 'REPO_USERNAME',
-          passwordVariable: 'REPO_PASSWORD'
-        )]) {
-          sh label: 'Publish service contract', script: """
+        sh label: 'Prepare service contract', script: """
             sed 's/latest/${VERSION}/' nais.yaml | tee nais.yaml
-            curl --user ${REPO_USERNAME}:${REPO_PASSWORD} --upload-file nais.yaml https://repo.adeo.no/repository/raw/nais/${APPLICATION_NAME}/${VERSION}/nais.yaml
-          """
-        }
+        """
 
         sh label: 'Deploy to non-production', script: """
           kubectl config use-context dev-${env.ZONE}
