@@ -80,8 +80,6 @@ pipeline {
     }
 
     stage('Acceptance testing') {
-      when { branch 'master' }
-
       stages {
         stage('Deploy to pre-production') {
           steps {
@@ -98,12 +96,26 @@ pipeline {
           // separate stages allows distributing them on seperate agents
           failFast true
 
+          environment {
+            APPLICATION_URL = sh(label: 'Get internal ingress for application', script: """
+              kubectl ingress ${APPLICATION_NAME} -o json | \
+              jq .spec.rules[0].host
+            """, returnStdout: true).trim()
+          }
+
+          when {
+            // Only run if able to get the ingress URL for the application
+            expression { env.APPLICATION_URL?.trim() }
+          }
+
           parallel {
             stage('User Acceptance Tests') {
               agent any
 
               steps {
-                sh label: "User Acceptance Tests", script: "./scripts/test/uat"
+                sh label: "User Acceptance Tests", script: """
+                  test -f ./scripts/test/uat && ./scripts/test/uat || true
+                """
               }
             }
 
@@ -111,7 +123,9 @@ pipeline {
               agent any
 
               steps {
-                sh label: "User Acceptance Tests", script: "./scripts/test/uat"
+                sh label: "Integration Tests", script: """
+                  test -f ./scripts/test/integration && ./scripts/test/integration || true
+                """
               }
             }
 
@@ -119,7 +133,9 @@ pipeline {
               agent any
 
               steps {
-                sh label: "User Acceptance Tests", script: "./scripts/test/uat"
+                sh label: "Run benchmark", script: """
+                  test -f ./scripts/test/benchmark && ./scripts/test/benchmark || true
+                """
               }
             }
           }
@@ -137,6 +153,11 @@ pipeline {
           kubectl rollout status -w deployment/${APPLICATION_NAME}
         """
       }
+
+      // prod-fss: daemon.nais.adeo.no
+      // preprod-fss: daemon.nais.test.local
+      // prod-sbs: daemon.nais.orea.no
+      // preprod-sbs: daemon.nais.oera-t.local
     }
 
     stage('Release') {
