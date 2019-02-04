@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+HOST=$(kubectl get ingress ${APPLICATION_NAME} -o json | jq .spec.rules[0].host)
+
+echo "Running tests against ${HOST}"
+echo "curl https://${HOST}"
+
+sleep $[ ( $RANDOM % 10 )  + 1 ]s

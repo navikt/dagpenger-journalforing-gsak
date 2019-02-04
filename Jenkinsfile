@@ -81,21 +81,9 @@ pipeline {
           // separate stages allows distributing them on seperate agents
           failFast true
 
-          environment {
-            APPLICATION_URL = sh(label: 'Get internal ingress for application', script: """
-              kubectl get ingress ${APPLICATION_NAME} -o json | \
-              jq .spec.rules[0].host
-            """, returnStdout: true).trim()
-          }
-
           parallel {
             stage('User Acceptance Tests') {
               agent any
-
-              when {
-                // Only run if able to get the ingress URL for the application
-                expression { env.APPLICATION_URL?.trim() }
-              }
 
               steps {
                 sh label: "User Acceptance Tests", script: """
@@ -141,7 +129,7 @@ pipeline {
     }
 
     stage('Release') {
-      when { branch 'feature/beefy-pipe' }
+      when { branch 'master' }
 
       steps {
         sh "echo true"
