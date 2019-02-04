@@ -88,14 +88,14 @@ pipeline {
             """, returnStdout: true).trim()
           }
 
-          when {
-            // Only run if able to get the ingress URL for the application
-            expression { env.APPLICATION_URL?.trim() }
-          }
-
           parallel {
             stage('User Acceptance Tests') {
               agent any
+
+              when {
+                // Only run if able to get the ingress URL for the application
+                expression { env.APPLICATION_URL?.trim() }
+              }
 
               steps {
                 sh label: "User Acceptance Tests", script: """
