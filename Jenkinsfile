@@ -129,7 +129,7 @@ pipeline {
     }
 
     stage('Deploy') {
-      when { branch 'masterasdf' }
+      when { branch 'master' }
 
       steps {
         sh label: 'Deploy with kubectl', script: """
@@ -138,15 +138,10 @@ pipeline {
           kubectl rollout status -w deployment/${APPLICATION_NAME}
         """
       }
-
-      // prod-fss: daemon.nais.adeo.no
-      // preprod-fss: daemon.nais.test.local
-      // prod-sbs: daemon.nais.orea.no
-      // preprod-sbs: daemon.nais.oera-t.local
     }
 
     stage('Release') {
-      when { branch 'master' }
+      when { branch 'feature/beefy-pipe' }
 
       steps {
         sh "echo true"
