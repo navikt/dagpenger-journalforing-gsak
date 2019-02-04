@@ -83,7 +83,7 @@ pipeline {
 
           environment {
             APPLICATION_URL = sh(label: 'Get internal ingress for application', script: """
-              kubectl ingress ${APPLICATION_NAME} -o json | \
+              kubectl get ingress ${APPLICATION_NAME} -o json | \
               jq .spec.rules[0].host
             """, returnStdout: true).trim()
           }
