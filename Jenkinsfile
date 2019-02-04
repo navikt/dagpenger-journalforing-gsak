@@ -44,19 +44,6 @@ pipeline {
         sh label: 'Prepare service contract', script: """
             sed 's/latest/${VERSION}/' nais.yaml | tee nais.yaml
         """
-
-        withCredentials([usernamePassword(
-          credentialsId: 'repo.adeo.no',
-          usernameVariable: 'NEXUS_USERNAME',
-          passwordVariable: 'NEXUS_PASSWORD'
-        )]) {
-          sh label: 'Upload NAIS service contract', script: """
-            nais upload \
-              --app ${APPLICATION_NAME} \
-              --version ${VERSION} \
-              --file nais.yaml
-          """
-        }
       }
 
       post {
@@ -84,7 +71,7 @@ pipeline {
         stage('Deploy to pre-production') {
           steps {
             sh label: 'Deploy with kubectl', script: """
-              kubectl config use-context preprod-${env.ZONE}
+              kubectl config use-context dev-${env.ZONE}
               kubectl apply -n ${env.NAMESPACE} -f nais.yaml --wait
               kubectl rollout status -w deployment/${APPLICATION_NAME}
             """
