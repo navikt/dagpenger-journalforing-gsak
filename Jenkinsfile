@@ -85,9 +85,14 @@ pipeline {
             stage('User Acceptance Tests') {
               agent any
 
+              when {
+                beforeAgent true
+                expression { sh "test -f ./scripts/test/uat", returnStatus: true }
+              }
+
               steps {
-                sh label: "User Acceptance Tests", script: """
-                  test -f ./scripts/test/uat && ./scripts/test/uat || true
+                sh label: 'User Acceptance Tests', script: """
+                  ./scripts/test/uat || true
                 """
               }
             }
@@ -95,9 +100,14 @@ pipeline {
             stage('Integration Tests') {
               agent any
 
+              when {
+                beforeAgent true
+                expression { sh "test -f ./scripts/test/integration", returnStatus: true }
+              }
+
               steps {
-                sh label: "Integration Tests", script: """
-                  test -f ./scripts/test/integration && ./scripts/test/integration || true
+                sh label: 'Integration Tests', script: """
+                  ./scripts/test/integration || true
                 """
               }
             }
@@ -105,9 +115,14 @@ pipeline {
             stage('Benchmark Tests') {
               agent any
 
+              when {
+                beforeAgent true
+                expression { sh "test -f ./scripts/test/benchmark", returnStatus: true }
+              }
+
               steps {
-                sh label: "Run benchmark", script: """
-                  test -f ./scripts/test/benchmark && ./scripts/test/benchmark || true
+                sh label: 'Run benchmark', script: """
+                  ./scripts/test/benchmark || true
                 """
               }
             }
