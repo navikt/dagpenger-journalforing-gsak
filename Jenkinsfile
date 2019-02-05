@@ -41,7 +41,9 @@ pipeline {
           """
         }
 
-        sh label: 'Prepare service contract', script: "sed 's/latest/${VERSION}/' nais.yaml | tee nais.yaml"
+        sh label: 'Prepare service contract', script: """
+          sed 's/latest/${VERSION}/' nais.yaml | tee nais.yaml
+        """
       }
 
       post {
