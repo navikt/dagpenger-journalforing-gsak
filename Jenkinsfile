@@ -42,7 +42,7 @@ pipeline {
         }
 
         sh label: 'Prepare service contract', script: """
-          sed 's/latest/${VERSION}/' nais.yaml | tee nais.yaml
+          sed 's/latest/${VERSION}/' nais.yaml | tee nais-deployed.yaml
         """
       }
 
@@ -61,7 +61,7 @@ pipeline {
         }
 
         success {
-          archiveArtifacts artifacts: 'nais.yaml', fingerprint: true
+          archiveArtifacts artifacts: 'nais*.yaml', fingerprint: true
         }
       }
     }
@@ -72,7 +72,7 @@ pipeline {
           steps {
             sh label: 'Deploy with kubectl', script: """
               kubectl config use-context dev-${env.ZONE}
-              kubectl apply -n ${env.NAMESPACE} -f nais.yaml --wait
+              kubectl apply -n ${env.NAMESPACE} -f nais-deployed.yaml --wait
               kubectl rollout status -w deployment/${APPLICATION_NAME}
             """
           }
