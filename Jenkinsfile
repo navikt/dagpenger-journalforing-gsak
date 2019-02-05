@@ -89,7 +89,13 @@ pipeline {
 
               when {
                 beforeAgent true
-                expression { sh "test -f ./scripts/test/uat", returnStatus: true }
+                expression {
+                  sh(
+                    label: 'Does the repository define any UAT tests?',
+                    script: 'test -f ./scripts/test/uat',
+                    returnStatus: true
+                  ) == 0
+                }
               }
 
               steps {
@@ -104,7 +110,13 @@ pipeline {
 
               when {
                 beforeAgent true
-                expression { sh "test -f ./scripts/test/integration", returnStatus: true }
+                expression {
+                  sh(
+                    label: 'Does the repository define any integration tests?',
+                    script: 'test -f ./scripts/test/integration',
+                    returnStatus: true
+                  ) == 0
+                }
               }
 
               steps {
@@ -119,7 +131,13 @@ pipeline {
 
               when {
                 beforeAgent true
-                expression { sh "test -f ./scripts/test/benchmark", returnStatus: true }
+                expression {
+                  sh(
+                    label: 'Does the repository define any benchmark tests?',
+                    script: 'test -f ./scripts/test/benchmark',
+                    returnStatus: true
+                  ) == 0
+                }
               }
 
               steps {
