@@ -36,7 +36,7 @@ java {
 }
 
 val kotlinLoggingVersion = "1.6.22"
-val kafkaVersion = "2.0.0"
+val kafkaVersion = "2.0.1"
 val confluentVersion = "4.1.2"
 val ktorVersion = "1.0.0"
 val prometheusVersion = "0.6.0"
