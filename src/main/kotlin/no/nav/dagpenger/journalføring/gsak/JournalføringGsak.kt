@@ -15,13 +15,14 @@ import no.nav.dagpenger.streams.consumeTopic
 import no.nav.dagpenger.streams.kbranch
 import no.nav.dagpenger.streams.streamConfig
 import no.nav.dagpenger.streams.toTopic
-import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsBuilder
+import org.apache.kafka.streams.Topology
 import java.util.Properties
 
 private val LOGGER = KotlinLogging.logger {}
 
 class JournalføringGsak(val env: Environment, val gsakClient: GsakClient) : Service() {
+
     override val SERVICE_APP_ID = "journalføring-gsak"
 
     override val HTTP_PORT: Int = env.httpPort ?: super.HTTP_PORT
@@ -37,9 +38,7 @@ class JournalføringGsak(val env: Environment, val gsakClient: GsakClient) : Ser
         }
     }
 
-    override fun setupStreams(): KafkaStreams {
-        LOGGER.info { "Initiating start of $SERVICE_APP_ID" }
-
+    override fun buildTopology(): Topology {
         val builder = StreamsBuilder()
         val inngåendeJournalposter = builder.consumeTopic(INNGÅENDE_JOURNALPOST, env.schemaRegistryUrl)
 
@@ -57,8 +56,7 @@ class JournalføringGsak(val env: Environment, val gsakClient: GsakClient) : Ser
         needsNewGsakSak.merge(hasExistingGsakSak)
             .peek { key, value -> LOGGER.info("Producing ${value.javaClass} with key $key") }
             .toTopic(INNGÅENDE_JOURNALPOST, env.schemaRegistryUrl)
-
-        return KafkaStreams(builder.build(), this.getConfig())
+        return builder.build()
     }
 
     override fun getConfig(): Properties {
