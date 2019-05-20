@@ -43,11 +43,14 @@ val ktorVersion = "1.0.0"
 val prometheusVersion = "0.6.0"
 val fuelVersion = "1.15.0"
 val log4j2Version = "2.11.1"
+val dpBibliotekerVersion = "2019.05.16-15.01.9c87faf52e8d"
 
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("com.github.navikt:dagpenger-streams:2019.05.20-12.02.83ff2b7cb7f6")
     implementation("com.github.navikt:dagpenger-events:2019.05.20-11.56.33cd4c73a439")
+
+    implementation("com.github.navikt.dp-biblioteker:sts-klient:$dpBibliotekerVersion")
 
     implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
 
