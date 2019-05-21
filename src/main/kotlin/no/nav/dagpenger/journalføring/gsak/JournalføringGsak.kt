@@ -84,7 +84,7 @@ class JournalføringGsak(val env: Environment, val gsakClient: GsakClient) : Ser
             behov.getBehovId()
         )
 
-        //TODO: Find correct sak
+        // TODO: Find correct sak
         behov.setGsaksakId(saker[0].id.toString())
         return behov
     }

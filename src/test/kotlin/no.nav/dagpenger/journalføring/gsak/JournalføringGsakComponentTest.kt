@@ -103,7 +103,7 @@ class JournalføringGsakComponentTest {
     @Test
     fun ` Processes the right behovs `() {
 
-        //Test data: [hasFagsakId, hasGsaksakId]
+        // Test data: [hasFagsakId, hasGsaksakId]
         val innkommendeBehov = listOf(
             listOf(true, true),
             listOf(true, false),
@@ -148,10 +148,10 @@ class JournalføringGsakComponentTest {
             .filter { record -> record.value().getBehovId() == behovId }
             .toList()
 
-        //Verify the number of produced messages
+        // Verify the number of produced messages
         assertEquals(innkommendeBehov.size + behovsToProcess, behovsListe.size)
 
-        //Check if JournalføringGsak sets gsakSakId, by verifing the number of behovs without gsaksakid
+        // Check if JournalføringGsak sets gsakSakId, by verifing the number of behovs without gsaksakid
         val withoutGsaksakId = behovsListe.filter { kanskjeBehandletBehov ->
             kanskjeBehandletBehov.value().getGsaksakId() == null
         }.size
@@ -161,7 +161,7 @@ class JournalføringGsakComponentTest {
     @Test
     fun ` Finds and creates saker `() {
 
-        //Test data: Vedtakstype
+        // Test data: Vedtakstype
         val innkommendeBehov = listOf(
             Vedtakstype.NY_RETTIGHET,
             Vedtakstype.NY_RETTIGHET,
@@ -200,7 +200,7 @@ class JournalføringGsakComponentTest {
             .filter { record -> record.value().getBehovId() == behovId }
             .toList()
 
-        //Verify the number of produced messages
+        // Verify the number of produced messages
         assertEquals(innkommendeBehov.size + behovsToProcess, behovsListe.size)
     }
 
