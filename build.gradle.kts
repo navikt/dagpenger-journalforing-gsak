@@ -41,13 +41,13 @@ val kafkaVersion = "2.0.1"
 val confluentVersion = "4.1.2"
 val ktorVersion = "1.0.0"
 val prometheusVersion = "0.6.0"
-val fuelVersion = "1.15.0"
+val fuelVersion = "2.1.0"
 val log4j2Version = "2.11.1"
-val dpBibliotekerVersion = "2019.05.16-15.01.9c87faf52e8d"
+val dpBibliotekerVersion = "2019.05.21-15.46.697023d907a7"
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("com.github.navikt:dagpenger-streams:2019.05.20-12.02.83ff2b7cb7f6")
+    implementation("com.github.navikt:dagpenger-streams:2019.05.21-14.30.a7af5e9d49fe")
     implementation("com.github.navikt:dagpenger-events:2019.05.20-11.56.33cd4c73a439")
 
     implementation("com.github.navikt.dp-biblioteker:sts-klient:$dpBibliotekerVersion")
@@ -56,6 +56,7 @@ dependencies {
 
     implementation("com.github.kittinunf.fuel:fuel:$fuelVersion")
     implementation("com.github.kittinunf.fuel:fuel-gson:$fuelVersion")
+    implementation("com.google.code.gson:gson:2.8.5")
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
 
