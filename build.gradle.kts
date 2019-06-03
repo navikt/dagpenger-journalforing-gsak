@@ -47,7 +47,7 @@ val dpBibliotekerVersion = "2019.05.21-15.46.697023d907a7"
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("com.github.navikt:dagpenger-streams:2019.05.21-14.30.a7af5e9d49fe")
+    implementation("com.github.navikt:dagpenger-streams:2019.06.03-21.15.cf80ca7a33d5")
     implementation("com.github.navikt:dagpenger-events:2019.05.20-11.56.33cd4c73a439")
 
     implementation("com.github.navikt.dp-biblioteker:sts-klient:$dpBibliotekerVersion")
