@@ -29,7 +29,8 @@ spec:
   prometheus:
     enabled: true
     path: /metrics
-  secrets: true
+  vault:
+    enabled: true
   env:
     - name: DAGPENGER_OPPSLAG_API_URL
       value: http://dagpenger-oppslag/
